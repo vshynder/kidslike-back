@@ -13,7 +13,9 @@ class TaskController {
             await TaskModel.create({
                 title,
                 price,
-                timeToDo: Date.now() + millisecondsInADay * days
+                days,
+                startDay: Date.now(),
+                finishDay: Date.now() + millisecondsInADay * days
             })
 
             return res.status(201).send('Task created')
@@ -29,8 +31,7 @@ class TaskController {
         const addSchemaValidator = Joi.object({
             title: Joi.string().required(),
             price: Joi.number().required(),
-            days: Joi.number(),
-            time: Joi.date()
+            days: Joi.number().required(),
         })
 
         TaskController.checkValidationError(addSchemaValidator, req, res, next)
