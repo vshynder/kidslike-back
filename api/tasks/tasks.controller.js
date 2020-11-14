@@ -28,13 +28,32 @@ class TaskController {
     }
 
     async updateTask(req, res, next) {
+        try {
+            const updatedTask = await TaskModel.findByIdAndUpdate(req.params.taskId, req.body)
 
-        const updatedTask = await TaskModel.findByIdAndUpdate(req.params.taskId, req.body)
+            return updatedTask ?
+                res.status(200).send({ message: "Task updated" }) :
+                res.status(200).send({ message: "Not found" })
 
-        return updatedTask ?
-            res.status(200).send({ message: "Task updated" }) :
-            res.status(200).send({ message: "Not found" })
+        } catch (error) {
+            next(error)
+        }
+    }
 
+    async removeTask(req, res, next) {
+        try {
+
+            const contact = await TaskModel.findByIdAndDelete(req.params.taskId)
+
+            if (!contact) {
+                return res.status(404).send({ message: "Not found" })
+            }
+
+            return res.status(200).send({ message: "Task deleted" })
+
+        } catch (error) {
+            next(error)
+        }
     }
 
     addTaskValidation(req, res, next) {
