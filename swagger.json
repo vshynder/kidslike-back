@@ -1,0 +1,164 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Kidslike v2 API",
+        "description": "This is a server for a Kidslike app."
+    },
+    "paths": {
+        "/api/tasks": {
+            "get": {
+                "tags": [
+                    "Задача"
+                ],
+                "operationId": "Get",
+                "consumes": [],
+                "produces": [
+                    "text/plain",
+                    "application/json",
+                    "text/json"
+                ],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Задача"
+                ],
+                "operationId": "Post",
+                "summary": "Добавить задачу",
+                "description": "Добавить задачу ребенку пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "description": "Объект данных задачи ребенка",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "title": "string",
+                                "reward": "number",
+                                "days": "number"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Задача добавлена"
+                    },
+                    "400": {
+                        "description": "Ошибка создания задачи "
+                    },
+                    "401": {
+                        "description": "Нет заголовка с токеном авторизации"
+                    }
+                }
+            }
+        },
+        "/api/tasks/:taskId": {
+            "patch": {
+                "tags": [
+                    "Задача"
+                ],
+                "operationId": "Patch",
+                "summary": "Изменить задачу",
+                "description": "Изменить задачу ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "description": "Объект данных задачи ребенка",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "title": "string",
+                                "reward": "number",
+                                "days": "number"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Задача изменена"
+                    },
+                    "400": {
+                        "description": "Ошибка изменения задачи "
+                    },
+                    "401": {
+                        "description": "Нет заголовка с токеном авторизации"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Задача"
+                ],
+                "operationId": "Delete",
+                "summary": "Удалить задачу",
+                "description": "Удалить задачу ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Задача удалена"
+                    },
+                    "401": {
+                        "description": "Нет заголовка с токеном авторизации"
+                    },
+                    "404": {
+                        "description": "Коллекция не найдена "
+                    },
+                    "500": {
+                        "description": "Ошибка сервера "
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {}
+}
