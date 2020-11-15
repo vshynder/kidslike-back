@@ -32,6 +32,7 @@ class Server {
   }
 
   initRoutes() {
+    this.server.use('/api/auth', usersRouter);
     this.server.use('/api/users', usersRouter);
     this.server.use('/api/token', tokenRouter);
     this.server.use('/api/tasks', tasksRouter);
