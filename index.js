@@ -4,13 +4,14 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 require('dotenv').config();
 const cors = require('cors');
+const swaggerDocument = require('./swagger.json');
 
 const usersRouter = require('./api/users/users.router');
 const tokenRouter = require('./api/token/token.router');
 const tasksRouter = require('./api/tasks/tasks.router');
 const presentsRouter = require('./api/presents/presents.router');
 const authRouter = require('./api/auth/auth.router');
-const swaggerDocument = require('./swagger.json')
+
 
 class Server {
   constructor() {
