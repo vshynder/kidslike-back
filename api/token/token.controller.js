@@ -20,12 +20,6 @@ class TokenController {
           .send({ message: 'Not authorized' });
       }
 
-      user = await authUserModel.findOne({ refresh_token: token });
-
-      if (!user) {
-        return res.status(401).send({ message: 'Not Found User' });
-      }
-
       const new_token = await jwt.sign(
         {
           id: user._id,
@@ -44,7 +38,7 @@ class TokenController {
         },
         process.env.SECRET_TOKEN,
         {
-          expiresIn: '24h',
+          expiresIn: '30d',
         },
       );
 
