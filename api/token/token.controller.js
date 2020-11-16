@@ -54,7 +54,7 @@ class TokenController {
         { new: true },
       );
 
-      return res.status(201).send({
+      return res.status(201).json({
         access_token: new_token,
         refresh_token: new_refresh_token,
       });
