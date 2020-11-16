@@ -27,9 +27,9 @@ class PresentsController {
       next(err);
     }
   }
-  //   async buyPresent(req, res, next) {
-  //     // test
-  //   }
+  async buyPresent(req, res, next) {
+    // test
+  }
 }
 
 module.exports = new PresentsController();
