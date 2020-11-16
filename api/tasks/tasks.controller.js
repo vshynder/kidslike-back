@@ -2,18 +2,31 @@ const TaskModel = require('./tasks.model');
 const Joi = require('joi');
 
 class TaskController {
+  async getTasks(req, res, next) {
+    try {
+      const tasks = await TaskModel.find();
+      return res.status(200).send(tasks);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async addTask(req, res, next) {
     try {
       const millisecondsInADay = 86400000;
-      const { title, reward, days } = req.body;
-      const finishDay = days ? Date.now() + millisecondsInADay * days : null;
+      const { title, reward, daysToDo } = req.body;
+      const finishDay = daysToDo
+        ? Date.now() + millisecondsInADay * daysToDo
+        : null;
 
       await TaskModel.create({
         title,
         reward,
-        days,
+        daysToDo,
         startDay: Date.now(),
         finishDay,
+        //пока в БД нет объекта ребенка, значение будет null
+        childId: null,
       });
 
       return res.status(201).send('Task created');
@@ -24,9 +37,19 @@ class TaskController {
 
   async updateTask(req, res, next) {
     try {
+      const { daysToDo } = req.body;
+      const millisecondsInADay = 86400000;
+      const finishDay = daysToDo
+        ? Date.now() + millisecondsInADay * daysToDo
+        : null;
+
+      const updated = daysToDo
+        ? { startDay: Date.now(), finishDay }
+        : { startDay: null, finishDay: null, ...req.body };
+
       const updatedTask = await TaskModel.findByIdAndUpdate(
         req.params.taskId,
-        req.body,
+        updated,
       );
 
       return updatedTask
@@ -53,8 +76,8 @@ class TaskController {
   addTaskValidation(req, res, next) {
     const addSchemaValidator = Joi.object({
       title: Joi.string().required(),
-      price: Joi.number().required(),
-      days: Joi.number(),
+      reward: Joi.number().required(),
+      daysToDo: Joi.number(),
     });
 
     TaskController.checkValidationError(addSchemaValidator, req, res, next);
@@ -63,33 +86,8 @@ class TaskController {
   updateTaskValidation(req, res, next) {
     const updateSchemaRules = Joi.object({
       title: Joi.string().required(),
-      price: Joi.number().required(),
-      days: Joi.number(),
-    });
-
-    TaskController.checkValidationError(updateSchemaRules, req, res, next);
-
-    return res.status(200).send({ message: 'Task deleted' });
-  }
-  catch(error) {
-    next(error);
-  }
-
-  addTaskValidation(req, res, next) {
-    const addSchemaValidator = Joi.object({
-      title: Joi.string().required(),
-      price: Joi.number().required(),
-      days: Joi.number(),
-    });
-
-    TaskController.checkValidationError(addSchemaValidator, req, res, next);
-  }
-
-  updateTaskValidation(req, res, next) {
-    const updateSchemaRules = Joi.object({
-      title: Joi.string().required(),
-      price: Joi.number().required(),
-      days: Joi.number(),
+      reward: Joi.number().required(),
+      daysToDo: Joi.number(),
     });
 
     TaskController.checkValidationError(updateSchemaRules, req, res, next);
