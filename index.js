@@ -1,13 +1,17 @@
 const express = require('express');
+const swagger = require('swagger-ui-express')
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 require('dotenv').config();
 const cors = require('cors');
+const swaggerDocument = require('./swagger.json');
 
 const usersRouter = require('./api/users/users.router');
 const tokenRouter = require('./api/token/token.router');
 const tasksRouter = require('./api/tasks/tasks.router');
 const presentsRouter = require('./api/presents/presents.router');
+const authRouter = require('./api/auth/auth.router');
+
 
 class Server {
   constructor() {
@@ -32,10 +36,12 @@ class Server {
   }
 
   initRoutes() {
+    this.server.use('/api/auth', authRouter);
     this.server.use('/api/users', usersRouter);
     this.server.use('/api/token', tokenRouter);
     this.server.use('/api/tasks', tasksRouter);
     this.server.use('/api/presents', presentsRouter);
+    this.server.use('/api-docs', swagger.serve, swagger.setup(swaggerDocument));
   }
 
   async connectDB() {

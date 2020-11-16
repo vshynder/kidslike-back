@@ -1,11 +1,11 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model } = require('mongoose');
 
 const TaskModel = new Schema({
     title: String,
     price: Number,
-    days: Number,
+    reward: Number,
     startDay: Date,
-    finishDay: Date
-})
+    finishDay: Date,
+});
 
-module.exports = model('Tasks', TaskModel)
+module.exports = model('Tasks', TaskModel);
