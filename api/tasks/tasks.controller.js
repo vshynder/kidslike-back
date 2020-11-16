@@ -67,7 +67,7 @@ class TaskController {
     }
 
     updateTaskValidation(req, res, next) {
-        updateSchemaRules = Joi.object({
+        const updateSchemaRules = Joi.object({
             title: Joi.string().required(),
             price: Joi.number().required(),
             days: Joi.number()
