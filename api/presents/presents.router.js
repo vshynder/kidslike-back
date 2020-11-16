@@ -5,6 +5,6 @@ const router = Router();
 
 router.post('/addPresent', presentsController.addPresent);
 // router.post('/buyPresent', presentsController.buyPresent);
-// router.delete('/:presentId', presentsController.removePresent);
+router.delete('/:presentId', presentsController.removePresent);
 
 module.exports = router;
