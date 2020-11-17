@@ -3,8 +3,6 @@ const tasksController = require('./tasks.controller');
 
 const router = Router();
 
-router.use('/', tasksController.getTasks);
-
 router.post(
   '/addTask',
   tasksController.addTaskValidation,
@@ -15,6 +13,9 @@ router.patch(
   tasksController.updateTaskValidation,
   tasksController.updateTask,
 );
+router.patch('/repeat/:taskId', tasksController.repeatTask);
 router.delete('/:taskId', tasksController.removeTask);
+
+router.use('/', tasksController.getTasks);
 
 module.exports = router;

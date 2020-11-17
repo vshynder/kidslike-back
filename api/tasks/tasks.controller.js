@@ -59,6 +59,19 @@ class TaskController {
       next(error);
     }
   }
+  async repeatTask(req, res, next) {
+    try {
+      const { taskId } = req.params;
+      const confirmedTask = await TaskModel.findByIdAndUpdate(taskId, {
+        isCompleted: 'active',
+      });
+      return confirmedTask
+        ? res.status(200).send({ message: 'Task active' })
+        : res.status(404).send({ message: 'Not found' });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   async removeTask(req, res, next) {
     try {
