@@ -3,8 +3,6 @@ const tasksController = require('./tasks.controller');
 
 const router = Router();
 
-// router.use('/', tasksController.getTasks);
-
 router.post(
   '/addTask',
   tasksController.addTaskValidation,
@@ -17,5 +15,7 @@ router.patch(
 );
 router.patch('/confirm/:taskId', tasksController.confirmTask);
 router.delete('/:taskId', tasksController.removeTask);
+router.patch('/notconfirm/:taskId', tasksController.notConfirmTask);
 
+router.use('/', tasksController.getTasks);
 module.exports = router;
