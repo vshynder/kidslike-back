@@ -15,6 +15,7 @@ router.patch(
 );
 
 router.patch('/repeat/:taskId', tasksController.repeatTask);
+router.patch('/confirm/:taskId', tasksController.confirmTask);
 
 router.delete('/:taskId', tasksController.removeTask);
 router.patch('/notconfirm/:taskId', tasksController.notConfirmTask);
