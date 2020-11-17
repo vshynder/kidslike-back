@@ -15,4 +15,4 @@ const authUserSchema = new Schema({
   refresh_token: { type: String, required: true },
 });
 
-module.exports = new model('User', authUserSchema);
+// module.exports = model('User', authUserSchema);
