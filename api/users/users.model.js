@@ -20,4 +20,4 @@ const UserSchema = new Schema({
   sessionToken: { type: String, default: '', required: false },
 });
 
-module.exports = new model('User', UserSchema);
+// module.exports = new model('User', UserSchema);
