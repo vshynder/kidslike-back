@@ -1,5 +1,5 @@
 const express = require('express');
-const swagger = require('swagger-ui-express')
+const swagger = require('swagger-ui-express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 require('dotenv').config();
