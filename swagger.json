@@ -54,7 +54,7 @@
                             "example": {
                                 "title": "string",
                                 "reward": "number",
-                                "days": "number"
+                                "daysToDo": "number"
                             }
                         }
                     },
@@ -101,7 +101,7 @@
                             "example": {
                                 "title": "string",
                                 "reward": "number",
-                                "days": "number"
+                                "daysToDo": "number"
                             }
                         }
                     },

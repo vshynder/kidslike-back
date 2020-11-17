@@ -1,11 +1,12 @@
-const { Schema, model } = require('mongoose');
+const { Schema, Types, model } = require('mongoose');
 
 const TaskModel = new Schema({
   title: String,
-  price: Number,
-  days: Number,
+  reward: Number,
+  daysToDo: Number,
   startDay: Date,
   finishDay: Date,
+  childId: Types.ObjectId,
 });
 
 module.exports = model('Tasks', TaskModel);
