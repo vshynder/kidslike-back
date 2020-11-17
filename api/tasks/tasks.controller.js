@@ -60,6 +60,19 @@ class TaskController {
     }
   }
 
+  async notConfirmTask(req, res, next) {
+    try {
+      const { taskId } = req.params;
+      const confirmedTask = await TaskModel.findByIdAndUpdate(taskId, {
+        isCompleted: 'undone',
+      });
+      return confirmedTask
+        ? res.status(200).send({ message: 'Task not confirmed' })
+        : res.status(404).send({ message: 'Not found' });
+    } catch (error) {
+      next(error);
+    }
+  }
   async removeTask(req, res, next) {
     try {
       const contact = await TaskModel.findByIdAndDelete(req.params.taskId);
