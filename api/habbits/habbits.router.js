@@ -7,4 +7,10 @@ habbitsRouter.get(
   habbitsController.getAllHabbitsChildrenByUser,
 );
 
+habbitsRouter.post(
+  '/addhabbit',
+  habbitsController.validIdChild,
+  habbitsController.addHabbit,
+);
+
 module.exports = habbitsRouter;
