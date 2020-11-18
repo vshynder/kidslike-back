@@ -1,6 +1,7 @@
 const express = require('express');
 const habbitsRouter = express.Router();
 const habbitsController = require('./habbits.controller');
+console.log(habbitsController);
 
 habbitsRouter.post(
   '/addhabbit',

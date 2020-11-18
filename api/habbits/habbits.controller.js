@@ -90,6 +90,11 @@ class Controllers {
       !ObjectId.isValid(req.body.idHabbit)
         ? res.status(400).send('Invalid id!')
         : next();
+
+    validIdChild = (req, res, next) =>
+      !ObjectId.isValid(req.body.idChild)
+        ? res.status(400).send('Invalid id!')
+        : next();
   };
 }
 
