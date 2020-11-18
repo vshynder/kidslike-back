@@ -1,9 +1,12 @@
 const { Router } = require('express');
 
 const router = Router();
-const GoogleOAuthController = require('./auth.controller')
+const {googleOAuth,facebookOAuth,initUser} = require('./auth.controller')
 
 
-router.post('google/',GoogleOAuthController.formQueryString)
-router.post('google/callback',GoogleOAuthController.loginFormGoogle, GoogleOAuthController.initifacationUser)
+router.get('/google',googleOAuth.formQueryString.bind(googleOAuth));
+router.get('/google/callback',googleOAuth.loginFormGoogle.bind(googleOAuth),initUser.bind());
+router.get('/facebook',facebookOAuth.formQueryString.bind(facebookOAuth));
+router.get('/facebook/callback', facebookOAuth.loginFormFacebook.bind(facebookOAuth),initUser.bind());
+
 module.exports = router;
