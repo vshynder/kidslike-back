@@ -1,6 +1,21 @@
 const PresentsModel = require('./presents.model');
-
 class PresentsController {
+
+async getAllPresentsChild(req,res){
+try {
+      //пока первый способ 
+    // пока принимаем параметры id chilв где ищем совпадения childId в модели подарков в схеме 
+    // нужно найти другой метот в поиске subdocument.populate  
+    const userId = req.params.childId
+
+    const childId = await PresentsModel.find({childId:userId})
+    //отправляем client массив подарков   
+    res.status(200).send(childId)
+} catch (error) {
+  console.log(error);
+} 
+}
+
   async addPresent(req, res, next) {
     try {
       let image;
