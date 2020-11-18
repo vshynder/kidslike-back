@@ -27,15 +27,17 @@ class GoogleOAuthController {
       //get code from Google Service 
       // get token
       const token = await this.getAccessTokenFromCode(req.query.code);
-
+      console.log('token:',token);
       if(!token){
           res.status(404).send({message:'Not found token'})
       }
       //get userProfile
       const user = await this.getGoogleDriveFiles(token);
+      console.log('user1 :', user);
       if(!user){
           res.status(404).send({message:'Not found'})
       };
+    
       req.user = user;
       next();
     } catch (error) {
@@ -46,7 +48,7 @@ class GoogleOAuthController {
   googleGetCodeLogin() {
     const params = queryString.stringify({
       client_id:'85907041916-n8741e6h0gnv1ehv8f67anjrjk69qij6.apps.googleusercontent.com',//  Заглушка , тут будет id нашего серваси 
-      redirect_uri: `http://localhost:${process.env.PORT}/api/auth/google/callback`,//  Заглушка url нашего сервиса на heruku /api/auth/google/callback
+      redirect_uri: `http://localhost:1717/api/auth/google/callback`,//  Заглушка url нашего сервиса на heruku /api/auth/google/callback
       scope: [
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
@@ -64,7 +66,7 @@ class GoogleOAuthController {
     return await axios.post('https://oauth2.googleapis.com/token',{ 
       client_id:'85907041916-n8741e6h0gnv1ehv8f67anjrjk69qij6.apps.googleusercontent.com',//  Заглушка 
       client_secret: 'I9CSPs3RUwOKVAG2OhAYEuYd',//  Заглушка 
-      redirect_uri: `http://localhost:${process.env.PORT}/api/auth/google/callback`,//  Заглушка url нашего сервиса на heruku /api/auth/google/callback
+      redirect_uri: `http://localhost:1717/api/auth/google/callback`,//  Заглушка url нашего сервиса на heruku /api/auth/google/callback
       grant_type: "authorization_code",
       code,})
           .then(data => data.data.access_token)
@@ -84,10 +86,10 @@ class GoogleOAuthController {
 };
 
 class FacebookOAuthController{
-  constructor(){
-    this.service_id='3787502474626124',//  Заглушка 
-    this.service_secret_code='40a9144f0c9063208a9539c8664c5bc3'//  Заглушка 
-  };
+  // constructor(){
+  //   this.service_id='3787502474626124',//  Заглушка 
+  //   this.service_secret_code='40a9144f0c9063208a9539c8664c5bc3'//  Заглушка 
+  // };
 
    formQueryString(req,res,next){
     try {
@@ -107,12 +109,11 @@ class FacebookOAuthController{
       if(!token){
         res.status(404).send({message:'Not found token'})
     }
-    console.log('token:', token);
+
       const user = await this.getFacebookUserData(token);
       if(!user){
         res.status(404).send({message:'Not found'})
     };
-
       req.user = user;
       next();
     } catch (error) {
@@ -123,8 +124,8 @@ class FacebookOAuthController{
 
  facebookLoginUrl() {
   const params = queryString.stringify({
-    client_id: this.service_id,
-    redirect_uri: `http://localhost:${process.env.PORT}/api/auth/facebook/callback`,//  //  Заглушка url нашего сервиса на heruku /api/auth/facebook/callback
+    client_id: '1933474900138088',
+    redirect_uri: `http://localhost:1717/api/auth/facebook/callback`,//  //  Заглушка url нашего сервиса на heruku /api/auth/facebook/callback
     scope: ["email", "user_friends"].join(","), 
     response_type: "code",
     auth_type: "rerequest",
@@ -136,9 +137,9 @@ class FacebookOAuthController{
 }
  async getAccessTokenFromCodeFacebook(code) {
   return  await axios.post("https://graph.facebook.com/v9.0/oauth/access_token",{
-      client_id: '3787502474626124',//  Заглушка 
-      client_secret: '40a9144f0c9063208a9539c8664c5bc3',//  Заглушка 
-      redirect_uri: `http://localhost:${process.env.PORT}/api/auth/facebook/callback`,//  Заглушка 
+      client_id: '1933474900138088',//  Заглушка 
+      client_secret: '4fd9fbee88f03b46cc2963803b9ae364',//  Заглушка 
+      redirect_uri: `http://localhost:1717/api/auth/facebook/callback`,//  Заглушка 
       code: code})
       .then(data => {
         return data.data.access_token})
@@ -159,21 +160,23 @@ class FacebookOAuthController{
 
 exports.initUser = async function initifacationUser(req,res){
   try {
-
-      const findUserEmail = await userModel.findOne({ email: req.user.email });
     
-      const user = findUserEmail === null ? await newUser(req.user) : findUserEmail
-    
-      const session = await sessionModel.create({
-        sid:user.id || user._id
-      });
+    const findUserEmail = await userModel.findOne({ email: req.user.email });
+  
+    const user = (findUserEmail === null) ? await newUser(req.user) : findUserEmail
 
+    const session = await sessionModel.create({
+      sid:user.id || user._id
+    });
+    
+    
+    console.log("session: ",session);
       const access_token = await jwt.sign(
         {
           id: user.id || user._id,
           session,
         },
-        process.env.SECRET_TOKEN,
+        process.env.TOKEN_SECRET,
         {
           expiresIn: "1h",
         }
@@ -184,32 +187,31 @@ exports.initUser = async function initifacationUser(req,res){
           id: user.id || user._id,
           session
         },
-        process.env.SECRET_TOKEN,
+        process.env.TOKEN_SECRET,
         {
           expiresIn: "24h",
         }
       );
-  
+        console.log('access_token:', access_token);
       return res.status(201).json({
           access_token,refresh_token,session
       });
     } catch (error) {
-      console.log();(error);
+      console.log(error);
     }
 };
 
 //  Заглушка надо совместить логику регистрации новых пользователей 
 async function newUser(user){
-  console.log(user);
+
   const hashPassword = await bcrypt.hash('secretPassword', 5);
-  console.log(hashPassword);
+
   const newUser = await userModel.create({
     username:user.name ,
     password: hashPassword,
     email:user.email,
     avatarURL: user.picture || defaultAvatar
   });
-  console.log(newUser);
   return newUser;
 }
 
