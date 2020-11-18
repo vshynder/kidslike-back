@@ -1,8 +1,6 @@
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { v4: uuid } = require('uuid');
-const nodemailer = require('nodemailer');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const { ObjectId } = require('mongodb');
@@ -25,6 +23,8 @@ class AuthController {
         password: hashPassword,
         avatarURL: defaultAvatar,
       });
+
+      // дописать сессию, к ней подвязать айди пользователя, в токен вшить айди пользователя, в рефреш токен вшить айди сессии
 
       await AuthController.sendVerifyEmail(createUser);
       return res.send({
