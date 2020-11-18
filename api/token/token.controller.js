@@ -44,7 +44,7 @@ class TokenController {
         },
         process.env.SECRET_TOKEN,
         {
-          expiresIn: '24h',
+          expiresIn: '30d',
         },
       );
 

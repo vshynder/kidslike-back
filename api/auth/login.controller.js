@@ -2,7 +2,7 @@ const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { ObjectId } = require('mongodb');
-const SessionModel = require('./session.model.js');
+const SessionModel = require('../session/session.model');
 const UserModel = require('../users/users.model.js');
 
 class LoginController {
