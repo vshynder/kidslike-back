@@ -7,6 +7,11 @@ const TaskModel = new Schema({
   startDay: Date,
   finishDay: Date,
   childId: Types.ObjectId,
+  isCompleted: {
+    type: String,
+    enum: ['active', 'done', 'undone'],
+    default: 'active',
+  },
 });
 
 module.exports = model('Tasks', TaskModel);
