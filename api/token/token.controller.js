@@ -1,4 +1,4 @@
-const authUserModel = require('../auth/auth.model');
+// const authUserModel = require('../auth/auth.model');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
@@ -44,7 +44,7 @@ class TokenController {
         },
         process.env.SECRET_TOKEN,
         {
-          expiresIn: '24h',
+          expiresIn: '30d',
         },
       );
 
