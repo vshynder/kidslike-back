@@ -12,6 +12,7 @@ const tasksRouter = require('./api/tasks/tasks.router');
 const presentsRouter = require('./api/presents/presents.router');
 const childrenRouter = require('./api/children/chidren.router');
 const authRouter = require('./api/auth/auth.router');
+const habbitsRouter = require('./api/habbits/habbits.router');
 
 class Server {
   constructor() {
@@ -42,7 +43,7 @@ class Server {
     this.server.use('/api/token', tokenRouter);
     this.server.use('/api/tasks', tasksRouter);
     this.server.use('/api/presents', presentsRouter);
-
+    this.server.use('/api/habbits', habbitsRouter);
     this.server.use('/api-docs', swagger.serve, swagger.setup(swaggerDocument));
   }
 
