@@ -201,7 +201,7 @@ exports.initUser = async function initifacationUser(req,res){
     }
 };
 
-//  Заглушка надо совместить логику регистрации новых пользователей 
+
 async function newUser(user){
 
   const hashPassword = await bcrypt.hash('secretPassword', 5);
