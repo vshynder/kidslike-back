@@ -20,4 +20,7 @@ habbitsRouter.patch(
   habbitsController.updateHabbit,
 );
 
+habbitsRouter.patch('/confirmed/:id', habbitsController.confirmedHabit);
+habbitsRouter.patch('/unconfirmed/:id', habbitsController.unconfirmed);
+
 module.exports = habbitsRouter;
