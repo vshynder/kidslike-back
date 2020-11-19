@@ -1,7 +1,6 @@
 const express = require('express');
 const habbitsRouter = express.Router();
 const habbitsController = require('./habbits.controller');
-console.log(habbitsController);
 
 habbitsRouter.post(
   '/addhabbit',
@@ -18,6 +17,12 @@ habbitsRouter.patch(
   '/updatehabbit',
   habbitsController.validIdHabbit,
   habbitsController.updateHabbit,
+);
+
+habbitsRouter.delete(
+  '/delhabbit',
+  habbitsController.validIdHabbit,
+  habbitsController.deleteHabbit,
 );
 
 habbitsRouter.patch('/confirmed/:id', habbitsController.confirmedHabit);
