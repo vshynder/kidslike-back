@@ -57,12 +57,10 @@ class Controllers {
   async confirmedHabit(req, res, next) {
     try {
       const { id } = req.params;
-      console.log(id);
       const confirmed = await HabbitsModel.findByIdAndUpdate(id, {
         isDone: 'confirmed',
       });
-      console.log(confirmed);
-      console.log(req.params);
+
       return confirmed
         ? res.status(200).send({ message: 'Confirmed' })
         : res.status(404).send({ message: 'Not found' });
