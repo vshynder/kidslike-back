@@ -54,34 +54,43 @@ class Controllers {
     }
   };
 
-  async confirmedHabit(req, res, next) {
+  updateHabbit = async (req, res, next) => {
     try {
-      const { id } = req.params;
-      const confirmed = await HabbitsModel.findByIdAndUpdate(id, {
-        isDone: 'confirmed',
-      });
+      let result = { complited: false, bonus: null };
+      let { nameHabbit, priceHabbit, idHabbit } = req.body; // Ожидается в req.body свойства nameHabbit, priceHabbit для обновления
+      idHabbit = '5fb52a395c98fb34189af5b9'; // Заглушка, Id Habbit, Ожидается в req.body.idHabbit.
 
-      return confirmed
-        ? res.status(200).send({ message: 'Confirmed' })
-        : res.status(404).send({ message: 'Not found' });
-    } catch (error) {
-      next(error);
-    }
-  }
+      await ChildrenModel.findOne(
+        {
+          'habbits._id': idHabbit,
+        },
+        async (err, child) => {
+          const getHabbit = child.habbits.find(
+            (habbit) => habbit.id === idHabbit,
+          );
 
-  async unconfirmed(req, res, next) {
-    try {
-      const { id } = req.params;
-      const confirmed = await HabbitsModel.findByIdAndUpdate(id, {
-        isDone: 'unConfirmed',
-      });
-      return confirmed
-        ? res.status(200).send({ message: 'unconfirmed' })
-        : res.status(404).send({ message: 'Not found' });
-    } catch (error) {
-      next(error);
+          if (nameHabbit) {
+            getHabbit.nameHabbit = nameHabbit;
+          }
+
+          if (priceHabbit) {
+            getHabbit.priceHabbit = priceHabbit;
+          }
+
+          child.save();
+
+          res.status(200).send(getHabbit);
+        },
+      );
+    } catch (err) {
+      next(err);
     }
-  }
+  };
+
+  validIdHabbit = (req, res, next) =>
+    !ObjectId.isValid(req.body.idHabbit)
+      ? res.status(400).send('Invalid id!')
+      : next();
 
   validIdChild = (req, res, next) =>
     !ObjectId.isValid(req.body.idChild)
