@@ -10,6 +10,11 @@ const HabbitsSchema = new Schema({
     required: true,
     default: '1111111111',
   },
+  isDone: {
+    type: String,
+    enum: ['undefined', 'confirmed', 'unConfirmed'],
+    default: 'undefined',
+  },
 });
 
 exports.HabbitsModel = model('Habbits', HabbitsSchema);
