@@ -54,6 +54,37 @@ class Controllers {
     }
   };
 
+  async confirmedHabit(req, res, next) {
+    try {
+      const { id } = req.params;
+      console.log(id);
+      const confirmed = await HabbitsModel.findByIdAndUpdate(id, {
+        isDone: 'confirmed',
+      });
+      console.log(confirmed);
+      console.log(req.params);
+      return confirmed
+        ? res.status(200).send({ message: 'Confirmed' })
+        : res.status(404).send({ message: 'Not found' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async unconfirmed(req, res, next) {
+    try {
+      const { id } = req.params;
+      const confirmed = await HabbitsModel.findByIdAndUpdate(id, {
+        isDone: 'unConfirmed',
+      });
+      return confirmed
+        ? res.status(200).send({ message: 'unconfirmed' })
+        : res.status(404).send({ message: 'Not found' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   validIdChild = (req, res, next) =>
     !ObjectId.isValid(req.body.idChild)
       ? res.status(400).send('Invalid id!')
