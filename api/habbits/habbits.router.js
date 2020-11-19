@@ -25,7 +25,10 @@ habbitsRouter.delete(
   habbitsController.deleteHabbit,
 );
 
-habbitsRouter.patch('/confirmed/:id', habbitsController.confirmedHabit);
-habbitsRouter.patch('/unconfirmed/:id', habbitsController.unconfirmed);
+habbitsRouter.patch(
+  '/checkhabbit',
+  habbitsController.validIdHabbit,
+  habbitsController.checkHabbit,
+);
 
 module.exports = habbitsRouter;

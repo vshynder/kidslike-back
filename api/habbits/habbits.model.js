@@ -11,11 +11,6 @@ const HabbitsSchema = new Schema({
     default: '1111111111',
   },
   genderChild: { type: String, required: true },
-  isDone: {
-    type: String,
-    enum: ['undefined', 'confirmed', 'unConfirmed'],
-    default: 'undefined',
-  },
 });
 
 exports.HabbitsModel = model('Habbits', HabbitsSchema);
