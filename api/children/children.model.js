@@ -1,6 +1,5 @@
 const { Schema, model } = require('mongoose');
 
-// const HabbitsSchema = {}; // Заглушка
 const { HabbitsSchema } = require('../habbits/habbits.model');
 
 const TasksSchema = {}; // Заглушка
@@ -22,8 +21,6 @@ const ChildrenSchema = new Schema({
   tasks: [TasksSchema],
   presents: [PresentsSchema],
 });
-
-// module.exports = model('Children', ChildrenSchema);
 
 exports.ChildrenModel = model('Children', ChildrenSchema);
 exports.ChildrenSchema = ChildrenSchema;
