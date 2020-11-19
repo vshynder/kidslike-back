@@ -54,6 +54,34 @@ class Controllers {
     }
   };
 
+  async confirmedHabit(req, res, next) {
+    try {
+      const { id } = req.params;
+      const confirmed = await HabbitsModel.findByIdAndUpdate(id, {
+        isDone: 'confirmed',
+      });
+
+      return confirmed
+        ? res.status(200).send({ message: 'Confirmed' })
+        : res.status(404).send({ message: 'Not found' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async unconfirmed(req, res, next) {
+    try {
+      const { id } = req.params;
+      const confirmed = await HabbitsModel.findByIdAndUpdate(id, {
+        isDone: 'unConfirmed',
+      });
+      return confirmed
+        ? res.status(200).send({ message: 'unconfirmed' })
+        : res.status(404).send({ message: 'Not found' });
+    } catch (error) {
+      next(error);
+    }
+  }
   updateHabbit = async (req, res, next) => {
     try {
       let result = { complited: false, bonus: null };
