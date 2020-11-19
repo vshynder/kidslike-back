@@ -10,10 +10,11 @@ const { ChildrenModel, ChildrenSchema } = require('../children/children.model');
 class Controllers {
   addHabbit = async (req, res, next) => {
     let { idChild } = req.body;
-    idChild = '5fb4f73805dba90ca4fbf464'; // Заглушка, Id ребенка
+    idChild = '5fb6a7d90684e71f08980e86'; // Заглушка, Id ребенка
     try {
       await ChildrenModel.findById(idChild, async (err, child) => {
         req.body.ownerHabbits = child.name;
+        req.body.genderChild = child.gender;
 
         child.habbits.push(req.body);
 
@@ -82,6 +83,29 @@ class Controllers {
           res.status(200).send(getHabbit);
         },
       );
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  deleteHabbit = async (req, res, next) => {
+    try {
+      let { idHabbit } = req.body;
+      idHabbit = '5fb6a804f81dbf1d40e8d3d9'; // Заглушка, Id Habbit, Ожидается в req.body.idHabbit.
+
+      await ChildrenModel.findOne(
+        {
+          'habbits._id': idHabbit, // Можно искать по имени - 'habbits.name'
+        },
+        async (err, child) => {
+          child.habbits = child.habbits.filter(
+            (habbit) => habbit.id !== idHabbit,
+          );
+          child.save();
+        },
+      );
+
+      res.status(200).send('deleted');
     } catch (err) {
       next(err);
     }
