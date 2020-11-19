@@ -19,6 +19,12 @@ habbitsRouter.patch(
   habbitsController.updateHabbit,
 );
 
+habbitsRouter.delete(
+  '/delhabbit',
+  habbitsController.validIdHabbit,
+  habbitsController.deleteHabbit,
+);
+
 habbitsRouter.patch('/confirmed/:id', habbitsController.confirmedHabit);
 habbitsRouter.patch('/unconfirmed/:id', habbitsController.unconfirmed);
 
