@@ -15,7 +15,7 @@ class TokenController {
         : authHeader.split(' ')[1];
 
       //
-      const sessionId = await jwt.verify(token, process.env.SECRET_TOKEN)
+      const sessionId = await jwt.verify(token, process.env.TOKEN_SECRET)
         .session._id;
       if (!sessionId) {
         res.status('Unauthorized', 401).send('not found session');
@@ -34,7 +34,7 @@ class TokenController {
           id: user._id,
           session,
         },
-        process.env.SECRET_TOKEN,
+        process.env.TOKEN_SECRET,
         {
           expiresIn: '1h',
         },
@@ -45,7 +45,7 @@ class TokenController {
           id: user._id,
           session,
         },
-        process.env.SECRET_TOKEN,
+        process.env.TOKEN_SECRET,
         {
           expiresIn: '30d',
         },
