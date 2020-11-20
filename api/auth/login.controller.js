@@ -10,6 +10,7 @@ class LoginController {
     try {
       const { email, password } = req.body;
       const user = await UserModel.findOne({ email });
+      const id = ObjectId(user._id);
       if (!user) {
         return res.status(404).send({ message: 'User was not found' });
       }
@@ -31,23 +32,26 @@ class LoginController {
         sid: parseId,
       });
       const accessToken = await jwt.sign(
-        { id: createSession.sid },
+        { uid: createSession.sid, sid: createSession._id },
         process.env.TOKEN_SECRET ? process.env.TOKEN_SECRET : 'kidslike',
         { expiresIn: '1h' },
       );
       const refreshToken = await jwt.sign(
-        { id: createSession._id },
+        { sid: createSession._id, uid: createSession.sid },
         process.env.TOKEN_SECRET ? process.env.TOKEN_SECRET : 'kidslike',
         { expiresIn: '30d' },
       );
-      return res.send({
-        user: {
-          username: user.username,
-          avatarURL: user.avatarURL,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        },
-      });
+      await (await UserModel.findById(id))
+        .populate('childrens')
+        .execPopulate((error, child) => {
+          return res.send({
+            name: user.username,
+            avatarURL: user.avatarURL,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            childrens: child.childrens,
+          });
+        });
     } catch (err) {
       next(err);
     }
@@ -59,17 +63,25 @@ class LoginController {
       let token;
       if (authorizationHeader) {
         token = authorizationHeader.split(' ')[1];
+      } else {
+        res.status(400).send({ message: 'missing token' });
       }
-      const decoded = await jwt.decode(token);
-      if (decoded === null || !decoded) {
-        res.status(400).send({ message: 'Invalid token' });
+      let verify;
+      try {
+        verify = await jwt.verify(token, process.env.TOKEN_SECRET);
+      } catch (err) {
+        res.status(401).send({ message: 'Unauthorized' });
       }
       try {
-        const session = await SessionModel.findOne({ sid: decoded.id });
+        const session = await SessionModel.findOne({ sid: verify.uid });
         if (!session) {
-          return res.status(400).send({ message: 'User was not authorize' });
+          return res.status(404).send({ message: 'Session was not found' });
         }
-        //Здесь еще не хватает логики с рефреш токеном, как быть если обычный токен истек
+        const user = await UserModel.findById(verify.uid);
+        if (user._id != verify.uid) {
+          return res.status(404).send({ message: 'User was not found' });
+        }
+        req.user = user;
         req.session = session;
       } catch (err) {
         next(err);
@@ -83,7 +95,7 @@ class LoginController {
   async logout(req, res, next) {
     try {
       await SessionModel.findByIdAndDelete(req.session._id);
-      return res.send({ message: 'deleted' });
+      return res.send({ message: 'success' });
     } catch (err) {
       next(err);
     }

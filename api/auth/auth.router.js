@@ -17,8 +17,7 @@ router.get(
   initUser.bind(),
 );
 
-router.post('/login', LoginController.validateUserLogin, LoginController.login);
-router.get('/authorize', LoginController.authorize);
-router.delete('/logout', LoginController.authorize, LoginController.logout);
+router.get('/login', LoginController.validateUserLogin, LoginController.login);
+router.put('/logout', LoginController.authorize, LoginController.logout);
 
 module.exports = router;

@@ -10,6 +10,7 @@ const HabbitsSchema = new Schema({
     required: true,
     default: '1111111111',
   },
+  genderChild: { type: String, required: true },
 });
 
 exports.HabbitsModel = model('Habbits', HabbitsSchema);
