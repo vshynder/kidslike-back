@@ -1,4 +1,5 @@
 const { ChildrenModel } = require('./children.model');
+const UserModel = require('../users/users.model');
 const Joi = require('joi');
 
 class Controllers {
@@ -12,6 +13,12 @@ class Controllers {
       req.user = { id: '5fb313842e5c6c182c9b214f' }; //Заглушка, ожидает обьект req.user с полем id Родителя ???
       req.body.idUser = req.user.id;
       const child = await ChildrenModel.create(req.body);
+      UserModel.findById(req.body.idUser, (err, user) => {
+        user.childrens.push(child.id);
+        user.save();
+      });
+
+      // child.push;
       return res
         .status(201)
         .send({ id: child._id, name: child.name, gender: child.gender });
