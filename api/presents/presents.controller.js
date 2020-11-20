@@ -1,4 +1,7 @@
 const PresentsModel = require('./presents.model');
+const ChildrenSchema = require('../children/children.model');
+const {ChildrenModel} = require('../children/children.model');
+
 class PresentsController {
 
 async getAllPresentsChild(req,res){
@@ -6,11 +9,19 @@ try {
       //пока первый способ 
     // пока принимаем параметры id chilв где ищем совпадения childId в модели подарков в схеме 
     // нужно найти другой метот в поиске subdocument.populate  
-    const userId = req.params.childId
+    const {userId} = req.params
+    console.log("userId =", userId);
 
-    const childId = await PresentsModel.find({childId:userId})
+    await ChildrenModel.find().populate('idUser').exec(function (err, children) {
+      if (err) return handleError(err);
+     const appPresent = children.map(present => present.presents)
+      res.status(200).send(appPresent)
+      //доделать 
+    });
+
+    // const childId = await PresentsModel.find({childId:userId})
     //отправляем client массив подарков   
-    res.status(200).send(childId)
+
 } catch (error) {
   console.log(error);
 } 
@@ -20,14 +31,51 @@ try {
     try {
       let image;
       const { title, childId, bal, file } = req.body;
-      await PresentsModel.create({
-        title,
-        childId,
-        bal,
-        image,
-        dateCreated: Date.now(),
+
+      await ChildrenModel.findById(childId, async (err, child) => {
+        req.body.name = child.name;
+
+        child.presents.push(req.body);
+
+        let childPresent = await child.save();
+
+        let createdPresent =
+          childPresent.presents[childPresent.presents.length - 1];
+        res.status(200).send({
+            title,
+            childId,
+            bal,
+            image,
+            dateCreated: Date.now(),
+        });
       });
-      return res.status(201).send('Present added');
+
+      // childrenModel.save(async function (err) {
+      //   if (err) return handleError(err);
+  
+
+        // const present =  await PresentsModel.create({
+        //   title,
+        //   childId,
+        //   bal,
+        //   image,
+        //   dateCreated: Date.now(),
+        // });
+      
+      //   childrenModel.save(function (err) {
+      //     if (err) return handleError(err);
+      //     // that's it!
+      //   });
+      // });
+
+      // await PresentsModel.create({
+      //   title,
+      //   childId,
+      //   bal,
+      //   image,
+      //   dateCreated: Date.now(),
+      // });
+
     } catch (err) {
       next(err);
     }
