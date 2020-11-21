@@ -6,6 +6,145 @@
         "description": "This is a server for a Kidslike app."
     },
     "paths": {
+        "/api/auth/google": {
+            "get": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "operationId": "Get",
+                "summary": "Авторизация через google",
+                "description": "Перенаправляет на сервис регестрации через google",
+                "consumes": [],
+                "produces": [
+                    "text/plain",
+                    "application/json",
+                    "text/json"
+                ],
+                "parameters": []
+            }
+        },
+        "/api/auth/google/callback": {
+            "get": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "operationId": "Get",
+                "summary": "Авторизация через google",
+                "description": "После регистрации дает код для получения токена. Возвращает КОД и ТОКЕН на http://localhost:1717/api/auth/google/callback после принятия токена делает еще один запрос на сервис для получения данных зарегестрированного пользователя",
+                "consumes": [],
+                "produces": [
+                    "text/plain",
+                    "application/json",
+                    "text/json"
+                ],
+                "parameters": []
+            }
+        },
+        "/api/auth/facebook": {
+            "get": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "operationId": "Get",
+                "summary": "Авторизация через facebook",
+                "description": "перенаправляет на сервис регистрации через facebook"
+            }
+        },
+        "/api/auth/facebook/callback": {},
+        "/api/auth/login": {},
+        "/api/auth/authorize": {},
+        "/api/auth/logout": {},
+        "/api/users/verify/:token": {
+            "post": {
+                "tags": [
+                    "Пользователь"
+                ],
+                "operationId": "Post",
+                "summary": "Добавить пользователя",
+                "description": "Добавить пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "user",
+                        "description": "Объект данных пользователя",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "username": "string",
+                                "email": "string",
+                                "password": "string"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Пользователь добавлен"
+                    },
+                    "400": {
+                        "description": "Ошибка добавления пользователя"
+                    }
+                }
+            }
+        },
+        "/api/children/addchild": {
+            "post": {
+                "tags": [
+                    "Ребенок"
+                ],
+                "operationId": "Post",
+                "summary": "Добавить ребенка",
+                "description": "Добавить ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "user",
+                        "description": "Идентификатор пользователя",
+                        "in": "req.user.id",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "child",
+                        "description": "Объект данных ребенка",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "name": "string",
+                                "gender": "string"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Ребенок добавлен"
+                    },
+                    "400": {
+                        "description": "Ошибка добавления ребенка"
+                    },
+                    "401": {
+                        "description": "Нет заголовка с токеном авторизации"
+                    }
+                }
+            }
+        },
         "/api/tasks": {
             "get": {
                 "tags": [
@@ -155,6 +294,147 @@
                     },
                     "500": {
                         "description": "Ошибка сервера "
+                    }
+                }
+            }
+        },
+        "/api/tasks/:taskId/confirm": {
+            "patch": {
+                "tags": [
+                    "Задача"
+                ],
+                "operationId": "Patch",
+                "summary": "Подтвердить задачу",
+                "description": "Подтверждение задачи ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "description": "Объект данных задачи ребенка",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "title": "string",
+                                "reward": "number",
+                                "daysToDo": "number"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Задача изменена"
+                    },
+                    "400": {
+                        "description": "Ошибка изменения задачи "
+                    },
+                    "401": {
+                        "description": "Нет заголовка с токеном авторизации"
+                    }
+                }
+            }
+        },
+        "/api/tasks/:taskId/notconfirm": {
+            "patch": {
+                "tags": [
+                    "Задача"
+                ],
+                "operationId": "Patch",
+                "summary": "Невыполнение задачи",
+                "description": "Отметить невыполненной задачу ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "description": "Объект данных задачи ребенка",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "title": "string",
+                                "reward": "number",
+                                "daysToDo": "number"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Задача изменена"
+                    },
+                    "400": {
+                        "description": "Ошибка изменения задачи "
+                    },
+                    "401": {
+                        "description": "Нет заголовка с токеном авторизации"
+                    }
+                }
+            }
+        },
+        "/api/tasks/:taskId/repeat": {
+            "patch": {
+                "tags": [
+                    "Задача"
+                ],
+                "operationId": "Patch",
+                "summary": "Повторить задачу",
+                "description": "Повторить задачу ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "description": "Объект данных задачи ребенка",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "title": "string",
+                                "reward": "number",
+                                "daysToDo": "number"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Задача изменена"
+                    },
+                    "400": {
+                        "description": "Ошибка изменения задачи "
+                    },
+                    "401": {
+                        "description": "Нет заголовка с токеном авторизации"
                     }
                 }
             }
