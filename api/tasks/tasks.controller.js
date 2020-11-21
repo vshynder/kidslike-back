@@ -15,20 +15,22 @@ class TaskController {
     try {
       const millisecondsInADay = 86400000;
       const { title, reward, daysToDo } = req.body;
+
       const finishDay = daysToDo
         ? Date.now() + millisecondsInADay * daysToDo
         : null;
 
-      await TaskModel.create({
+      const newTask = {
         title,
         reward,
         daysToDo,
         startDay: Date.now(),
         finishDay,
-        //пока в БД нет объекта ребенка, значение будет null
         childId: null,
-      });
+      };
 
+      await TaskModel.create(newTask);
+      //вернуть объект
       return res.status(201).send('Task created');
     } catch (error) {
       next(error);

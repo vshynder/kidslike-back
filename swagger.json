@@ -3,7 +3,31 @@
     "info": {
         "version": "1.0.0",
         "title": "Kidslike v2 API",
-        "description": "This is a server for a Kidslike app."
+        "description": "This is a server for a Kidslike app.",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "tags": [
+            {
+                "name": "Авторизация"
+            },
+            {
+                "name": "Пользователь"
+            },
+            {
+                "name": "Ребенок"
+            },
+            {
+                "name": "Задачи"
+            },
+            {
+                "name": "Привычки"
+            },
+            {
+                "name": "Подарки"
+            }
+        ]
     },
     "paths": {
         "/api/auth/google": {
@@ -23,23 +47,6 @@
                 "parameters": []
             }
         },
-        "/api/auth/google/callback": {
-            "get": {
-                "tags": [
-                    "Авторизация"
-                ],
-                "operationId": "Get",
-                "summary": "Авторизация через google",
-                "description": "После регистрации дает код для получения токена. Возвращает КОД и ТОКЕН на http://localhost:1717/api/auth/google/callback после принятия токена делает еще один запрос на сервис для получения данных зарегестрированного пользователя",
-                "consumes": [],
-                "produces": [
-                    "text/plain",
-                    "application/json",
-                    "text/json"
-                ],
-                "parameters": []
-            }
-        },
         "/api/auth/facebook": {
             "get": {
                 "tags": [
@@ -50,10 +57,6 @@
                 "description": "перенаправляет на сервис регистрации через facebook"
             }
         },
-        "/api/auth/facebook/callback": {},
-        "/api/auth/login": {},
-        "/api/auth/authorize": {},
-        "/api/auth/logout": {},
         "/api/users/verify/:token": {
             "post": {
                 "tags": [
@@ -103,38 +106,31 @@
                 "consumes": [
                     "application/json"
                 ],
-                "produces": [],
                 "parameters": [
                     {
-                        "name": "user",
-                        "description": "Идентификатор пользователя",
-                        "in": "req.user.id",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "child",
+                        "name": "Request body",
                         "description": "Объект данных ребенка",
                         "in": "body",
-                        "required": false,
+                        "required": true,
                         "schema": {
-                            "type": "object",
-                            "example": {
-                                "name": "string",
-                                "gender": "string"
-                            }
+                            "$ref": "#/components/schemas/addChild"
                         }
                     },
                     {
                         "name": "Authorization",
                         "in": "header",
+                        "type": "string",
                         "description": "Токен",
                         "required": true
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "Ребенок добавлен"
+                        "description": "Ребенок добавлен",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/addChildResponse"
+                        }
                     },
                     "400": {
                         "description": "Ошибка добавления ребенка"
@@ -184,17 +180,12 @@
                 "produces": [],
                 "parameters": [
                     {
-                        "name": "task",
+                        "name": "Task",
                         "description": "Объект данных задачи ребенка",
                         "in": "body",
-                        "required": false,
+                        "required": true,
                         "schema": {
-                            "type": "object",
-                            "example": {
-                                "title": "string",
-                                "reward": "number",
-                                "daysToDo": "number"
-                            }
+                            "$ref": "#/components/schemas/addTask"
                         }
                     },
                     {
@@ -206,7 +197,11 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "Задача добавлена"
+                        "description": "Задача добавлена",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/addTaskResponse"
+                        }
                     },
                     "400": {
                         "description": "Ошибка создания задачи "
@@ -298,7 +293,7 @@
                 }
             }
         },
-        "/api/tasks/:taskId/confirm": {
+        "/api/tasks/confirm/:taskId": {
             "patch": {
                 "tags": [
                     "Задача"
@@ -345,7 +340,7 @@
                 }
             }
         },
-        "/api/tasks/:taskId/notconfirm": {
+        "/api/tasks/notconfirm/:taskId": {
             "patch": {
                 "tags": [
                     "Задача"
@@ -392,7 +387,7 @@
                 }
             }
         },
-        "/api/tasks/:taskId/repeat": {
+        "/api/tasks/repeat/:taskId": {
             "patch": {
                 "tags": [
                     "Задача"
@@ -440,5 +435,88 @@
             }
         }
     },
-    "definitions": {}
+    "components": {
+        "schemas": {
+            "authSuccess": {
+                "type": "object",
+                "properties": {}
+            },
+            "addChild": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "gender"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "decription": "Child's gender",
+                        "enum": [
+                            "male",
+                            "female"
+                        ]
+                    }
+                }
+            },
+            "addChildResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "gender": {
+                        "type": "string"
+                    }
+                }
+            },
+            "task": {},
+            "addTask": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "reward"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "reward": {
+                        "type": "number"
+                    },
+                    "daysToDo": {
+                        "type": "number"
+                    }
+                }
+            },
+            "addTaskResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "reward": {
+                        "type": "number"
+                    },
+                    "daysToDo": {
+                        "type": "number"
+                    },
+                    "childId": {
+                        "type": "string"
+                    },
+                    "isCompleted": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
 }
