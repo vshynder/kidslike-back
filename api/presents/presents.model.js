@@ -1,11 +1,12 @@
 const { Schema, model } = require('mongoose');
 
-const PresentsModel = new Schema({
-  title: String,
-  childId: String,
-  bal: Number,
-  image: String,
+const PresentsSchema = new Schema({
+  title: { type: String, required: true },
+  childId: { type: String, required: true },
+  bal: { type: Number, required: true },
+  image: { type: String, required: true },
   dateCreated: Date,
 });
 
-module.exports = model('Presents', PresentsModel);
+exports.PresentsModel = model('Presents', PresentsSchema);
+exports.PresentsSchema = PresentsSchema;

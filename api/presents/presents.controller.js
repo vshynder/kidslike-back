@@ -1,27 +1,35 @@
 const PresentsModel = require('./presents.model');
+const userModel = require('../users/users.model')
 const ChildrenSchema = require('../children/children.model');
 const {ChildrenModel} = require('../children/children.model');
+const { Types, SchemaType } = require('mongoose');
+const { types } = require('joi');
 
 class PresentsController {
 
 async getAllPresentsChild(req,res){
 try {
-      //пока первый способ 
-    // пока принимаем параметры id chilв где ищем совпадения childId в модели подарков в схеме 
-    // нужно найти другой метот в поиске subdocument.populate  
-    const {userId} = req.params
+
+    const {userId} = req.params  // принимает в строке запроса _id User
     console.log("userId =", userId);
 
-    await ChildrenModel.find().populate('idUser').exec(function (err, children) {
-      if (err) return handleError(err);
-     const appPresent = children.map(present => present.presents)
-      res.status(200).send(appPresent)
-      //доделать 
-    });
+    const allChildrenByUser = await ChildrenModel.find({
+      idUser:Types.ObjectId(userId)
+    })
 
-    // const childId = await PresentsModel.find({childId:userId})
-    //отправляем client массив подарков   
-
+    if(!allChildrenByUser){
+      return res.status(401).send({message:'Not found User ID'})
+    }
+  
+    const allPresents = allChildrenByUser.reduce((acc,present)=>{
+      
+      present.presents.length > 0 ? acc.push(...present.presents): false;
+      console.log(acc);
+      return acc
+        },[]);
+        
+    //to do find all pseresents id to array 
+    return res.status(201).send(allPresents)
 } catch (error) {
   console.log(error);
 } 
@@ -33,48 +41,20 @@ try {
       const { title, childId, bal, file } = req.body;
 
       await ChildrenModel.findById(childId, async (err, child) => {
-        req.body.name = child.name;
 
-        child.presents.push(req.body);
+        const newPresent = await PresentsModel.create({
+          title,
+          childId,
+          bal,
+          image,
+          dateCreated: Date.now(),
+        })
+        
+        child.presents.push(newPresent);
 
         let childPresent = await child.save();
-
-        let createdPresent =
-          childPresent.presents[childPresent.presents.length - 1];
-        res.status(200).send({
-            title,
-            childId,
-            bal,
-            image,
-            dateCreated: Date.now(),
-        });
+        res.status(200).send(childPresent);
       });
-
-      // childrenModel.save(async function (err) {
-      //   if (err) return handleError(err);
-  
-
-        // const present =  await PresentsModel.create({
-        //   title,
-        //   childId,
-        //   bal,
-        //   image,
-        //   dateCreated: Date.now(),
-        // });
-      
-      //   childrenModel.save(function (err) {
-      //     if (err) return handleError(err);
-      //     // that's it!
-      //   });
-      // });
-
-      // await PresentsModel.create({
-      //   title,
-      //   childId,
-      //   bal,
-      //   image,
-      //   dateCreated: Date.now(),
-      // });
 
     } catch (err) {
       next(err);
