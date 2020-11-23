@@ -4,7 +4,7 @@ const tasksController = require('./tasks.controller');
 const router = Router();
 
 router.post(
-  '/addTask',
+  '/:childId',
   tasksController.addTaskValidation,
   tasksController.addTask,
 );
