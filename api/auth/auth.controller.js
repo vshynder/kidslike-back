@@ -86,10 +86,6 @@ class GoogleOAuthController {
 };
 
 class FacebookOAuthController{
-  // constructor(){
-  //   this.service_id='3787502474626124',//  Заглушка 
-  //   this.service_secret_code='40a9144f0c9063208a9539c8664c5bc3'//  Заглушка 
-  // };
 
    formQueryString(req,res,next){
     try {
