@@ -23,7 +23,7 @@ class Controllers {
         let createdHabbit =
           childWithNewHabbit.habbits[childWithNewHabbit.habbits.length - 1];
 
-        return res.status(200).send(createdHabbit);
+        return res.status(201).send(createdHabbit);
       });
     } catch (err) {
       console.log(err);
@@ -53,7 +53,6 @@ class Controllers {
 
   updateHabbit = async (req, res, next) => {
     try {
-      // let result = { complited: false, bonus: null };
       let {
         nameHabbit,
         priceHabbit,
@@ -84,7 +83,7 @@ class Controllers {
 
       if (idNewChildOwnerHabbit) {
         let childForDelHabbit = await ChildrenModel.findOne({
-          'habbits._id': idHabbit, // Можно искать по имени - 'habbits.name'
+          'habbits._id': idHabbit,
         });
 
         childForDelHabbit.habbits = childForDelHabbit.habbits.filter(
@@ -112,7 +111,7 @@ class Controllers {
 
       child.save();
 
-      return res.status(200).send(getHabbit);
+      return res.status(202).send(getHabbit);
     } catch (err) {
       next(err);
     }
@@ -125,7 +124,7 @@ class Controllers {
 
       await ChildrenModel.findOne(
         {
-          'habbits._id': idHabbit, // Можно искать по имени - 'habbits.name'
+          'habbits._id': idHabbit,
         },
         async (err, child) => {
           child.habbits = child.habbits.filter(
@@ -145,7 +144,7 @@ class Controllers {
     try {
       let result = { complited: false, bonus: null };
       let { confirmed, idHabbit } = req.body;
-      idHabbit = '5fb52a395c98fb34189af5b9'; // Заглушка, Id Habbit, Ожидается в req.body.idHabbit.
+      // idHabbit = '5fb52a395c98fb34189af5b9'; // Заглушка, Id Habbit, Ожидается в req.body.idHabbit.
 
       await ChildrenModel.findOne(
         {
@@ -191,7 +190,9 @@ class Controllers {
 
           child.save();
 
-          return res.status(200).send(result);
+          return res
+            .status(200)
+            .send({ ...result, newSprintHabbit: getHabbit.sprintHabbit });
         },
       );
     } catch (err) {
