@@ -1,9 +1,11 @@
 const TaskModel = require('./tasks.model');
+const ChildrenModel = require('../children/children.model');
 const Joi = require('joi');
 
 class TaskController {
   async getTasks(req, res, next) {
     try {
+      const userId = '5fb58ca77df3612673e62e11';
       const tasks = await TaskModel.find();
       return res.status(200).send(tasks);
     } catch (error) {
@@ -13,6 +15,8 @@ class TaskController {
 
   async addTask(req, res, next) {
     try {
+      const childId = req.params.childId;
+
       const millisecondsInADay = 86400000;
       const { title, reward, daysToDo } = req.body;
 
@@ -20,18 +24,15 @@ class TaskController {
         ? Date.now() + millisecondsInADay * daysToDo
         : null;
 
-      const newTask = {
+      const task = await TaskModel.create({
         title,
         reward,
         daysToDo,
         startDay: Date.now(),
         finishDay,
-        childId: null,
-      };
-
-      await TaskModel.create(newTask);
-      //вернуть объект
-      return res.status(201).send('Task created');
+        childId,
+      });
+      return res.status(201).send(task);
     } catch (error) {
       next(error);
     }

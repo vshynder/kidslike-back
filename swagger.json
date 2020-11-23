@@ -30,6 +30,110 @@
         ]
     },
     "paths": {
+        "/api/users/register": {
+            "post": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "operationId": "Get",
+                "summary": "Регистрация пользователя",
+                "description": "Зарегистрировать нового пользователя",
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Объект данных для регистрации пользователя",
+                        "schema": {
+                            "$ref": "#/components/schemas/registerSuccess"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Пользователь создан",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/authSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка создания пользователя"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "get": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "operationId": "Get",
+                "summary": "Залогинить пользователя",
+                "description": "Залогинить пользователя",
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "description": "Объект данных для входа",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/login"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Авторизация прошла успешна",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/authSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка авторизации"
+                    }
+                }
+            }
+        },
+        "api/auth/logout": {
+            "put": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Разлогинить пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Операция прошла успешно",
+                        "content": "application/json"
+                    },
+                    "400": {
+                        "description": "Нет заголовка с токеном авторизации",
+                        "content": "application/json"
+                    },
+                    "401": {
+                        "description": "Токен авторизации невалидный",
+                        "content": "application/json"
+                    },
+                    "404": {
+                        "description": "Пользователь/сессия не найдены",
+                        "content": "application/json"
+                    }
+                }
+            }
+        },
         "/api/auth/google": {
             "get": {
                 "tags": [
@@ -37,14 +141,20 @@
                 ],
                 "operationId": "Get",
                 "summary": "Авторизация через google",
-                "description": "Перенаправляет на сервис регестрации через google",
-                "consumes": [],
-                "produces": [
-                    "text/plain",
-                    "application/json",
-                    "text/json"
-                ],
-                "parameters": []
+                "description": "Перенаправляет на сервис регистрации через google",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Авторизация прошла успешна",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/authSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка авторизации"
+                    }
+                }
             }
         },
         "/api/auth/facebook": {
@@ -54,43 +164,17 @@
                 ],
                 "operationId": "Get",
                 "summary": "Авторизация через facebook",
-                "description": "перенаправляет на сервис регистрации через facebook"
-            }
-        },
-        "/api/users/verify/:token": {
-            "post": {
-                "tags": [
-                    "Пользователь"
-                ],
-                "operationId": "Post",
-                "summary": "Добавить пользователя",
-                "description": "Добавить пользователя",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [],
-                "parameters": [
-                    {
-                        "name": "user",
-                        "description": "Объект данных пользователя",
-                        "in": "body",
-                        "required": false,
-                        "schema": {
-                            "type": "object",
-                            "example": {
-                                "username": "string",
-                                "email": "string",
-                                "password": "string"
-                            }
-                        }
-                    }
-                ],
+                "description": "перенаправляет на сервис регистрации через facebook",
                 "responses": {
-                    "201": {
-                        "description": "Пользователь добавлен"
+                    "200": {
+                        "description": "Авторизация прошла успешна",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/authSuccess"
+                        }
                     },
                     "400": {
-                        "description": "Ошибка добавления пользователя"
+                        "description": "Ошибка авторизации"
                     }
                 }
             }
@@ -166,7 +250,9 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "api/tasks/:childId": {
             "post": {
                 "tags": [
                     "Задача"
@@ -208,6 +294,9 @@
                     },
                     "401": {
                         "description": "Нет заголовка с токеном авторизации"
+                    },
+                    "404": {
+                        "description": "Ребенок не найден"
                     }
                 }
             }
@@ -439,7 +528,96 @@
         "schemas": {
             "authSuccess": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "username": {
+                                "type": "string"
+                            },
+                            "email": {
+                                "type": "string"
+                            },
+                            "avatarURL": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "created",
+                                    "verified"
+                                ]
+                            },
+                            "childrens": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "objectId": {
+                                            "type": "string",
+                                            "desctiption": "ObjectId"
+                                        }
+                                    }
+                                }
+                            },
+                            "verificationToken": {
+                                "type": "string"
+                            },
+                            "sessionToken": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "register": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "decription": "User's name"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User's email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User's password"
+                    }
+                }
+            },
+            "registerSuccess": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "object",
+                        "decription": "Data object after successful registration",
+                        "properties": {
+                            "username": {
+                                "type": "string",
+                                "decription": "User's name"
+                            },
+                            "avatarURL": {
+                                "type": "string",
+                                "description": "User's profile avatar url"
+                            }
+                        }
+                    }
+                }
+            },
+            "login": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User's email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User's password"
+                    }
+                }
             },
             "addChild": {
                 "type": "object",
@@ -497,7 +675,15 @@
             "addTaskResponse": {
                 "type": "object",
                 "properties": {
-                    "id": {
+                    "isCompleted": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "done",
+                            "undone"
+                        ]
+                    },
+                    "_id": {
                         "type": "string"
                     },
                     "title": {
@@ -509,10 +695,15 @@
                     "daysToDo": {
                         "type": "number"
                     },
-                    "childId": {
-                        "type": "string"
+                    "startDay": {
+                        "type": "string",
+                        "decription": "The day when task started"
                     },
-                    "isCompleted": {
+                    "finishDay": {
+                        "type": "string",
+                        "decription": "The day when task finished"
+                    },
+                    "childId": {
                         "type": "string"
                     }
                 }
