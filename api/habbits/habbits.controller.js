@@ -20,14 +20,9 @@ class Controllers {
 
         let childWithNewHabbit = await child.save();
 
-        let createdHsabbit =
+        let createdHabbit =
           childWithNewHabbit.habbits[childWithNewHabbit.habbits.length - 1];
-        res.status(200).send({
-          idHabbit: createdHsabbit._id,
-          nameHabbit: createdHsabbit.nameHabbit,
-          priceHabbit: createdHsabbit.priceHabbit,
-          ownerHabbits: createdHsabbit.ownerHabbits,
-        });
+        res.status(200).send(createdHabbit);
       });
     } catch (err) {
       console.log(err);
@@ -57,7 +52,6 @@ class Controllers {
 
   updateHabbit = async (req, res, next) => {
     try {
-      let result = { complited: false, bonus: null };
       let { nameHabbit, priceHabbit, idHabbit } = req.body; // Ожидается в req.body свойства nameHabbit, priceHabbit для обновления
       idHabbit = '5fb52a395c98fb34189af5b9'; // Заглушка, Id Habbit, Ожидается в req.body.idHabbit.
 
