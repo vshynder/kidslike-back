@@ -10,7 +10,7 @@ const { ChildrenModel, ChildrenSchema } = require('../children/children.model');
 class Controllers {
   addHabbit = async (req, res, next) => {
     let { idChild } = req.body;
-    idChild = '5fb6a7d90684e71f08980e86'; // Заглушка, Id ребенка
+    idChild = '5fb7ac03930dc826c4b85a32'; // Заглушка, Id ребенка
     try {
       await ChildrenModel.findById(idChild, async (err, child) => {
         req.body.ownerHabbits = child.name;
@@ -22,7 +22,8 @@ class Controllers {
 
         let createdHabbit =
           childWithNewHabbit.habbits[childWithNewHabbit.habbits.length - 1];
-        res.status(200).send(createdHabbit);
+
+        return res.status(200).send(createdHabbit);
       });
     } catch (err) {
       console.log(err);
@@ -44,7 +45,7 @@ class Controllers {
         return acc;
       }, []);
 
-      res.status(200).send(allHabbits);
+      return res.status(200).send(allHabbits);
     } catch (err) {
       next(err);
     }
@@ -52,31 +53,66 @@ class Controllers {
 
   updateHabbit = async (req, res, next) => {
     try {
-      let { nameHabbit, priceHabbit, idHabbit } = req.body; // Ожидается в req.body свойства nameHabbit, priceHabbit для обновления
-      idHabbit = '5fb52a395c98fb34189af5b9'; // Заглушка, Id Habbit, Ожидается в req.body.idHabbit.
+      // let result = { complited: false, bonus: null };
+      let {
+        nameHabbit,
+        priceHabbit,
+        idHabbit,
+        idNewChildOwnerHabbit,
+      } = req.body; // Ожидается в req.body необязательные свойства nameHabbit, priceHabbit, idNewChildOwnerHabbit для обновления
+      // idHabbit = '5fbac414128a4130c8bc9eae'; // Заглушка, Id Habbit, Ожидается в req.body.idHabbit.
 
-      await ChildrenModel.findOne(
-        {
-          'habbits._id': idHabbit,
-        },
-        async (err, child) => {
-          const getHabbit = child.habbits.find(
-            (habbit) => habbit.id === idHabbit,
+      let child = await ChildrenModel.findOne({
+        'habbits._id': idHabbit,
+      });
+
+      !child && res.status(400).send('no IdHabbit ' + idHabbit);
+
+      const getHabbit = child.habbits.find((habbit) => habbit.id === idHabbit);
+
+      if (nameHabbit) {
+        getHabbit.nameHabbit = nameHabbit;
+      } else {
+        req.body.nameHabbit = getHabbit.nameHabbit;
+      }
+
+      if (priceHabbit) {
+        getHabbit.priceHabbit = priceHabbit;
+      } else {
+        req.body.priceHabbit = getHabbit.priceHabbit;
+      }
+
+      if (idNewChildOwnerHabbit) {
+        let childForDelHabbit = await ChildrenModel.findOne({
+          'habbits._id': idHabbit, // Можно искать по имени - 'habbits.name'
+        });
+
+        childForDelHabbit.habbits = childForDelHabbit.habbits.filter(
+          (habbit) => habbit.id !== idHabbit,
+        );
+        childForDelHabbit.save();
+
+        try {
+          let childForAddHabbit = await ChildrenModel.findById(
+            idNewChildOwnerHabbit,
           );
 
-          if (nameHabbit) {
-            getHabbit.nameHabbit = nameHabbit;
-          }
+          req.body.idChild = idNewChildOwnerHabbit;
+          req.body.ownerHabbits = childForAddHabbit.name;
+          req.body.genderChild = childForAddHabbit.gender;
 
-          if (priceHabbit) {
-            getHabbit.priceHabbit = priceHabbit;
-          }
+          childForAddHabbit.habbits.push(req.body);
 
-          child.save();
+          await childForAddHabbit.save();
+        } catch (err) {
+          console.log(err);
+          next(err);
+        }
+      }
 
-          res.status(200).send(getHabbit);
-        },
-      );
+      child.save();
+
+      return res.status(200).send(getHabbit);
     } catch (err) {
       next(err);
     }
@@ -99,7 +135,7 @@ class Controllers {
         },
       );
 
-      res.status(200).send('deleted');
+      return res.status(200).send('deleted');
     } catch (err) {
       next(err);
     }
@@ -155,7 +191,7 @@ class Controllers {
 
           child.save();
 
-          res.status(200).send(result);
+          return res.status(200).send(result);
         },
       );
     } catch (err) {

@@ -5,7 +5,7 @@ const { HabbitsSchema } = require('../habbits/habbits.model');
 const TasksSchema = {}; // Заглушка
 // const { TaskSchema } = require('../tasks/tasks.model');
 
-const PresentsSchema = {}; // Заглушка
+const {PresentsSchema} = require('../presents/presents.model'); // Заглушка
 // const { PresentsSchema } = require('../presents/presents.model');
 
 const ChildrenSchema = new Schema({
