@@ -3,6 +3,7 @@ const userModel = require('../users/users.model')
 const ChildrenSchema = require('../children/children.model');
 const {ChildrenModel} = require('../children/children.model');
 const { Types, SchemaType } = require('mongoose');
+const { ObjectId } = require('mongoose').Types;
 const { types } = require('joi');
 
 class PresentsController {
@@ -66,9 +67,17 @@ try {
   async removePresent(req, res, next) {
     try {
       const { presentId } = req.params;
-      const result = await PresentsModel.findByIdAndDelete(presentId);
-      if (!result) return res.status(404).send({ message: 'Not found' });
-      return res.status(201).send('Present deleted');
+      req.child = { id: '5fbe5d5d25fad0371495570f'}; //Заглушка, очікування обьекта req.child з id
+      req.body.childId = req.child.id;
+      let { childId } = req.body;
+      if (ObjectId.isValid(presentId)) {
+        console.log(presentId)
+        const result = await PresentsModel.findByIdAndDelete(presentId);
+        if (!result) return res.status(404).send({ message: 'Not found' });
+        const newPresent = await PresentsModel.find();
+        await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: newPresent}},{ upsert:true, returnNewDocument : true });
+        return res.status(201).send("Present deleted"); 
+      }
     } catch (err) {
       next(err);
     }
