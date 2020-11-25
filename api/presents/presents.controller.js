@@ -1,4 +1,4 @@
-const PresentsModel = require('./presents.model');
+const {PresentsModel} = require('./presents.model');
 const userModel = require('../users/users.model')
 const ChildrenSchema = require('../children/children.model');
 const {ChildrenModel} = require('../children/children.model');
@@ -37,8 +37,11 @@ try {
 
   async addPresent(req, res, next) {
     try {
+      req.child = { id: '5fbe5d5d25fad0371495570f' }; //Заглушка, очікування обьекта req.child з id
+      req.body.childId = req.child.id;
+      let { childId } = req.body;
       let image;
-      const { title, childId, bal, file } = req.body;
+      const { title, bal, file } = req.body;
 
       await ChildrenModel.findById(childId, async (err, child) => {
 
@@ -73,6 +76,18 @@ try {
   async buyPresent(req, res, next) {
     // test
   }
+
+  validPresent = (req, res, next) => {
+    const validator = Joi.object({
+      title: Joi.string().required(),
+      childId: Joi.string().required(),
+      bal: Joi.number().required(),
+      image: Joi.string(),
+      dateCreated: Joi.date(),
+    });
+    const { error } = validator.validate(req.body);
+    return error ? res.status(400).send(error.message) : next();
+  };
 }
 
 module.exports = new PresentsController();
