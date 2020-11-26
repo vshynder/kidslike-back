@@ -526,6 +526,151 @@
                     }
                 }
             }
+        },
+        "/api/presents/addPresent": {
+            "post": {
+                "tags": [
+                    "Подарки"
+                ],
+                "operationId": "Post",
+                "summary": "Добавление подарка",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Объект данных для добавления подарка",
+                        "schema": {
+                            "$ref": "#/components/schemas/addPresent"
+                        }
+                    },
+                    {},
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/presents/buyPresent": {
+            "post": {
+                "tags": [
+                    "Подарки"
+                ],
+                "operationId": "Post",
+                "summary": "Покупка подарка (Еще не написана)",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Объект данных для покупки подарка",
+                        "schema": {
+                            "$ref": "#/components/schemas/  "
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/presents/:presentId": {
+            "delete": {
+                "tags": [
+                    "Подарки"
+                ],
+                "operationId": "Delete",
+                "summary": "Удаление подарка",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "Present's Id",
+                        "in": "path",
+                        "type": "string",
+                        "required": true,
+                        "description": "Present's Id"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Present deleted successful"
+                    },
+                    "401": {
+                        "description": "Unauthorize"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/presents/:userId": {
+            "get": {
+                "tags": [
+                    "Подарки"
+                ],
+                "operationId": "Get",
+                "summary": "Получение подарков",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "User Id",
+                        "in": "path",
+                        "type": "string",
+                        "required": true,
+                        "description": "принимает в строке запроса _id User"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/getPresents"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorize"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -536,6 +681,9 @@
                     "user": {
                         "type": "object",
                         "properties": {
+                            "_id": {
+                                "type": "string"
+                            },
                             "username": {
                                 "type": "string"
                             },
@@ -544,13 +692,6 @@
                             },
                             "avatarURL": {
                                 "type": "string"
-                            },
-                            "status": {
-                                "type": "string",
-                                "enum": [
-                                    "created",
-                                    "verified"
-                                ]
                             },
                             "childrens": {
                                 "type": "array",
@@ -561,19 +702,6 @@
                                             "type": "string",
                                             "desctiption": "ObjectId"
                                         }
-                                    }
-                                }
-                            },
-                            "session": {
-                                "type": "object",
-                                "properties": {
-                                    "_id": {
-                                        "type": "string",
-                                        "description": "User's id"
-                                    },
-                                    "sid": {
-                                        "type": "string",
-                                        "description": "Session Id"
                                     }
                                 }
                             },
@@ -761,6 +889,49 @@
                     },
                     "childId": {
                         "type": "string"
+                    }
+                }
+            },
+            "addPresent": {
+                "type": "object",
+                "required:": [
+                    "title",
+                    "childId",
+                    "bal"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "childId": {
+                        "type": "string"
+                    },
+                    "bal": {
+                        "type": "number"
+                    }
+                }
+            },
+            "getPresents": {
+                "type": "array",
+                "description": "Array of presents",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string"
+                        },
+                        "childId": {
+                            "type": "string"
+                        },
+                        "bal": {
+                            "type": "number"
+                        },
+                        "image": {
+                            "type": "string"
+                        },
+                        "dateCreated": {
+                            "type": "string"
+                        }
                     }
                 }
             }
