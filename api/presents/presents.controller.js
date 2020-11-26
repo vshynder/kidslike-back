@@ -88,8 +88,8 @@ try {
         const result = await PresentsModel.findByIdAndDelete(presentId);
         if (!result) return res.status(404).send({ message: 'Not found' });
         const newPresent = await PresentsModel.find();
-        const presentId = newPresent.map(e=>(e._id));
-        await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: presentId}},{ upsert:true, returnNewDocument : true });
+        const newPresentId = newPresent.map(e=>(e._id));
+        await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: newPresentId}},{ upsert:true, returnNewDocument : true });
         return res.status(201).send("Present deleted"); 
       }
     } catch (err) {
@@ -97,7 +97,34 @@ try {
     }
   }
   async buyPresent(req, res, next) {
-    // test
+    try {
+      const session = req.session;
+      if (!session) {
+        return res.status(404).send({ message: "Session was not found" });
+      }
+      const { presentId } = req.params;
+      req.child = { id: '5fbe5d5d25fad0371495570f'}; //Заглушка, очікування обьекта req.child з id
+      req.body.childId = req.child.id;
+      let { childId } = req.body;
+
+      if (ObjectId.isValid(presentId)) {
+        const Present = await PresentsModel.findById(presentId);
+        const Child = await ChildrenModel.findById(childId);
+        const rewardChild = Child.stars;
+        const rewardPresent = Present.reward;
+        if(rewardChild >= rewardPresent){
+          const newRewardPresent = rewardChild - rewardPresent;
+          await ChildrenModel.findByIdAndUpdate(childId, {$set: {stars: newRewardPresent}},{ upsert:true, returnNewDocument : true });
+          return res.status(200).send('Present buy'); 
+          // const result = await PresentsModel.findByIdAndDelete(presentId);
+          // if (!result) return res.status(404).send({ message: 'Not found' });
+        } else {res.status(404).send({ message: "You don't have that much stars" })}
+        // const newPresent = await PresentsModel.find();
+        // const newPresentId = newPresent.map(e=>(e._id));
+      }
+    } catch (err) {
+      next(err);
+    }
   }
 
 
