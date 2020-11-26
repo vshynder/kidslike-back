@@ -229,6 +229,229 @@
                 }
             }
         },
+        "/api/habbits/addhabbit": {
+            "post": {
+                "tags": [
+                    "Привычки"
+                ],
+                "operationId": "Post",
+                "summary": "Добавить привычку",
+                "description": "",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Объект данных для добавления привычки ребенка",
+                        "schema": {
+                            "$ref": "#/components/schemas/addHabbit"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Habbit created succesful.",
+                        "schema": {
+                            "$ref": "#/components/schemas/addHabbitResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/habbits/getallhabbitsuser": {
+            "get": {
+                "tags": [
+                    "Привычки"
+                ],
+                "operationId": "Get",
+                "summary": "",
+                "description": "",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Req.user.id",
+                        "in": "body",
+                        "type": "string",
+                        "description": "User's Id ",
+                        "required": true
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/components/schemas/getAllHabbits"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/habbits/updatehabbit": {
+            "patch": {
+                "tags": [
+                    "Привычки"
+                ],
+                "operationId": "Patch",
+                "summary": "",
+                "description": "",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Data object to update the habbit",
+                        "schema": {
+                            "$ref": "#/components/schemas/updateHabbit "
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/components/schemas/addHabbitResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/habbits/checkhabbit": {
+            "patch": {
+                "tags": [
+                    "Привычки"
+                ],
+                "operationId": "Patch",
+                "summary": "",
+                "description": "",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/components/schemas/checkHabbit"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/components/schemas/checkHabbitResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/habbits/delhabbit": {
+            "delete": {
+                "tags": [
+                    "Привычки"
+                ],
+                "operationId": "Delete",
+                "summary": "Удалить привычку",
+                "description": "Удаление привычки ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Habbit's Id",
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "idHabbit": "string"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Habbit deleted successful."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
         "/api/tasks": {
             "get": {
                 "tags": [
@@ -545,7 +768,6 @@
                             "$ref": "#/components/schemas/addPresent"
                         }
                     },
-                    {},
                     {
                         "name": "Authorization",
                         "in": "header",
@@ -574,10 +796,7 @@
                         "name": "Request body",
                         "in": "body",
                         "required": true,
-                        "description": "Объект данных для покупки подарка",
-                        "schema": {
-                            "$ref": "#/components/schemas/  "
-                        }
+                        "description": "Объект данных для покупки подарка"
                     },
                     {
                         "name": "Authorization",
@@ -623,7 +842,7 @@
                         "description": "Present deleted successful"
                     },
                     "401": {
-                        "description": "Unauthorize"
+                        "description": "Unauthorized"
                     },
                     "404": {
                         "description": "Not found"
@@ -664,7 +883,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorize"
+                        "description": "Unauthorized"
                     },
                     "404": {
                         "description": "Not found"
@@ -834,6 +1053,132 @@
                     },
                     "gender": {
                         "type": "string"
+                    }
+                }
+            },
+            "addHabbit": {
+                "type": "object",
+                "properties": {
+                    "nameHabbit": {
+                        "type": "string"
+                    },
+                    "priceHabbit": {
+                        "type": "string"
+                    },
+                    "ownerHabbits": {
+                        "type": "number"
+                    },
+                    "idChild": {
+                        "type": "string"
+                    },
+                    "sprintHabbit": {
+                        "type": "string",
+                        "required": true,
+                        "default": "1111111111"
+                    },
+                    "genderChild": {
+                        "type": "string"
+                    }
+                }
+            },
+            "addHabbitResponse": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "type": "string"
+                    },
+                    "nameHabbit": {
+                        "type": "string"
+                    },
+                    "priceHabbit": {
+                        "type": "string"
+                    },
+                    "ownerHabbits": {
+                        "type": "number"
+                    },
+                    "idChild": {
+                        "type": "string"
+                    },
+                    "sprintHabbit": {
+                        "type": "string",
+                        "required": true,
+                        "default": "1111111111"
+                    },
+                    "genderChild": {
+                        "type": "string"
+                    }
+                }
+            },
+            "updateHabbit": {
+                "type": "object",
+                "properties": {
+                    "nameHabbit": {
+                        "type": "string"
+                    },
+                    "priceHabbit": {
+                        "type": "number"
+                    },
+                    "idHabbit": {
+                        "type": "string"
+                    },
+                    "idNewChildOwnerHabbit": {
+                        "type": "string"
+                    }
+                }
+            },
+            "checkHabbit": {
+                "type": "object",
+                "properties": {
+                    "idHabbit": {
+                        "type": "string"
+                    },
+                    "confirmed": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "checkHabbitResponse": {
+                "type": "object",
+                "properties": {
+                    "completed": {
+                        "type": "boolean"
+                    },
+                    "bonus": {
+                        "type": "boolean"
+                    },
+                    "newSprintHabbit": {
+                        "type": "string"
+                    }
+                }
+            },
+            "getAllHabbits": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "_id": {
+                            "type": "string"
+                        },
+                        "nameHabbit": {
+                            "type": "string"
+                        },
+                        "priceHabbit": {
+                            "type": "string"
+                        },
+                        "ownerHabbits": {
+                            "type": "number"
+                        },
+                        "idChild": {
+                            "type": "string"
+                        },
+                        "sprintHabbit": {
+                            "type": "string",
+                            "required": true,
+                            "default": "1111111111"
+                        },
+                        "genderChild": {
+                            "type": "string"
+                        }
                     }
                 }
             },
