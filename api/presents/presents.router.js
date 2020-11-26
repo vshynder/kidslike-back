@@ -5,7 +5,7 @@ const {imageUploader} = require('./uploadImage')
 const router = Router();
 
 
-router.post('/addPresent', imageUploader, presentsController.addPresent, presentsController.validPresent);
+router.post('/addPresent', imageUploader, presentsController.validPresent, presentsController.addPresent);
 router.post('/buyPresent', presentsController.buyPresent);
 router.delete('/:presentId', presentsController.removePresent);
 router.get('/:userId',presentsController.getAllPresentsChild)

@@ -4,8 +4,8 @@ const ChildrenSchema = require('../children/children.model');
 const {ChildrenModel} = require('../children/children.model');
 const { Types, SchemaType } = require('mongoose');
 const { ObjectId } = require('mongoose').Types;
-const { types } = require('joi');
-const multer = require('multer');
+// const { types } = require('joi');
+const Joi = require('joi');
 
 class PresentsController {
 
@@ -37,31 +37,29 @@ try {
 } 
 }
 
+
+
   async addPresent(req, res, next) {
     try {
       req.child = { id: '5fbe5d5d25fad0371495570f' }; //Заглушка, очікування обьекта req.child з id
       req.body.childId = req.child.id;
       let { childId } = req.body;
+      const findsId = (id) => {return ChildrenModel.find({_id:id})};
+      if(!findsId(childId))return res.status(404).send({ message: 'Not found' });
       const splitpatch = req.files ? req.files.map(e => (e.path)) : ""
-      const imagePath = splitpatch ? `http://localhost:1717/`+`${splitpatch}`.split('\\').slice().join('/') : "";
-      const { title, bal} = req.body;
-
-      await ChildrenModel.findById(childId, async (err, child) => {
-
-        const newPresent = await PresentsModel.create({
-          title,
-          childId,
-          bal,
-          image: imagePath,
-          dateCreated: Date.now(),
-        })
-        
-        child.presents.push(newPresent);
-
-        await child.save();
-        res.status(200).send('Present added');
-      });
-
+      const imagePath = splitpatch ? `http://localhost:1717/`+`${splitpatch}`.split('\\').slice(3).join('/') : "";
+      const { title, reward} = req.body;
+      await PresentsModel.create({
+        title,
+        childId,
+        reward,
+        image: imagePath,
+        dateCreated: Date.now(),
+      })
+      const newPresent = await PresentsModel.find();
+      const presentId = newPresent.map(e=>(e._id));
+      await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: presentId}},{ upsert:true, returnNewDocument : true });
+      res.status(200).send('Present added');
     } catch (err) {
       next(err);
     }
@@ -78,7 +76,8 @@ try {
         const result = await PresentsModel.findByIdAndDelete(presentId);
         if (!result) return res.status(404).send({ message: 'Not found' });
         const newPresent = await PresentsModel.find();
-        await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: newPresent}},{ upsert:true, returnNewDocument : true });
+        const presentId = newPresent.map(e=>(e._id));
+        await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: presentId}},{ upsert:true, returnNewDocument : true });
         return res.status(201).send("Present deleted"); 
       }
     } catch (err) {
@@ -89,11 +88,12 @@ try {
     // test
   }
 
+
   validPresent = (req, res, next) => {
     const validator = Joi.object({
-      title: Joi.string().required(),
+      title: Joi.string(),
       childId: Joi.string().required(),
-      bal: Joi.number().required(),
+      reward: Joi.number(),
       image: Joi.string(),
       dateCreated: Joi.date(),
     });
