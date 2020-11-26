@@ -10,10 +10,10 @@ class LoginController {
     try {
       const { email, password } = req.body;
       const user = await UserModel.findOne({ email });
-      const id = ObjectId(user._id);
       if (!user) {
         return res.status(404).send({ message: 'User was not found' });
       }
+      const id = ObjectId(user._id);
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
@@ -41,17 +41,13 @@ class LoginController {
         process.env.TOKEN_SECRET ? process.env.TOKEN_SECRET : 'kidslike',
         { expiresIn: '30d' },
       );
-      await (await UserModel.findById(id))
-        .populate('childrens')
-        .execPopulate((error, child) => {
-          return res.send({
-            name: user.username,
-            avatarURL: user.avatarURL,
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-            childrens: child.childrens,
-          });
-        });
+      return res.send({
+        name: user.username,
+        email: user.email,
+        avatarURL: user.avatarURL,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      });
     } catch (err) {
       next(err);
     }
@@ -92,6 +88,23 @@ class LoginController {
     }
   }
 
+  async getCurrentUser(req, res, next) {
+    try {
+      const user = req.user;
+      const session = req.session;
+      if (!session) {
+      }
+      res.send({
+        name: user.username,
+        avatarURL: user.avatarURL,
+        childrens: user.childrens,
+        email: user.email,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async logout(req, res, next) {
     try {
       await SessionModel.findByIdAndDelete(req.session._id);
@@ -103,8 +116,8 @@ class LoginController {
 
   validateUserLogin(req, res, next) {
     const validateSchema = Joi.object({
-      email: Joi.string().required(),
-      password: Joi.string().required(),
+      email: Joi.string().email().empty().max(50).required(),
+      password: Joi.string().empty().max(50).required(),
     });
     LoginController.checkValidationError(validateSchema, req, res, next);
   }
