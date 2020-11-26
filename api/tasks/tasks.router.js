@@ -23,7 +23,11 @@ router.patch(
 );
 
 router.delete('/:taskId', tasksController.removeTask);
-router.patch('/notconfirm/:taskId', tasksController.notConfirmTask);
+router.patch(
+  '/notconfirm/:taskId',
+  loginController.authorize,
+  tasksController.notConfirmTask,
+);
 
 router.use('/', tasksController.getTasks);
 
