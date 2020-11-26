@@ -45,7 +45,7 @@
                         "required": true,
                         "description": "Объект данных для регистрации пользователя",
                         "schema": {
-                            "$ref": "#/components/schemas/registerSuccess"
+                            "$ref": "#/components/schemas/register"
                         }
                     }
                 ],
@@ -54,21 +54,24 @@
                         "description": "Пользователь создан",
                         "content": "application/json",
                         "schema": {
-                            "$ref": "#/components/schemas/authSuccess"
+                            "$ref": "#/components/schemas/registerSuccess"
                         }
                     },
                     "400": {
                         "description": "Ошибка создания пользователя"
+                    },
+                    "409": {
+                        "description": "User already exists"
                     }
                 }
             }
         },
         "/api/auth/login": {
-            "get": {
+            "post": {
                 "tags": [
                     "Авторизация"
                 ],
-                "operationId": "Get",
+                "operationId": "Post",
                 "summary": "Залогинить пользователя",
                 "description": "Залогинить пользователя",
                 "parameters": [
@@ -87,7 +90,7 @@
                         "description": "Авторизация прошла успешна",
                         "content": "application/json",
                         "schema": {
-                            "$ref": "#/components/schemas/authSuccess"
+                            "$ref": "#/components/schemas/loginSuccess"
                         }
                     },
                     "400": {
@@ -97,11 +100,12 @@
             }
         },
         "api/auth/logout": {
-            "put": {
+            "delete": {
                 "tags": [
                     "Авторизация"
                 ],
                 "summary": "Разлогинить пользователя",
+                "operationId": "Post",
                 "consumes": [
                     "application/json"
                 ],
@@ -148,7 +152,7 @@
                         "description": "Авторизация прошла успешна",
                         "content": "application/json",
                         "schema": {
-                            "$ref": "#/components/schemas/authSuccess"
+                            "$ref": "#/components/schemas/OAuthSuccess"
                         }
                     },
                     "400": {
@@ -170,7 +174,7 @@
                         "description": "Авторизация прошла успешна",
                         "content": "application/json",
                         "schema": {
-                            "$ref": "#/components/schemas/authSuccess"
+                            "$ref": "#/components/schemas/OAuthSuccess"
                         }
                     },
                     "400": {
@@ -526,7 +530,7 @@
     },
     "components": {
         "schemas": {
-            "authSuccess": {
+            "OAuthSuccess": {
                 "type": "object",
                 "properties": {
                     "user": {
@@ -560,10 +564,23 @@
                                     }
                                 }
                             },
-                            "verificationToken": {
+                            "session": {
+                                "type": "object",
+                                "properties": {
+                                    "_id": {
+                                        "type": "string",
+                                        "description": "User's id"
+                                    },
+                                    "sid": {
+                                        "type": "string",
+                                        "description": "Session Id"
+                                    }
+                                }
+                            },
+                            "access_token": {
                                 "type": "string"
                             },
-                            "sessionToken": {
+                            "refresh_token": {
                                 "type": "string"
                             }
                         }
@@ -616,6 +633,45 @@
                     "password": {
                         "type": "string",
                         "description": "User's password"
+                    }
+                }
+            },
+            "loginSuccess": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "decription": "User's name"
+                    },
+                    "avatarURL": {
+                        "type": "string",
+                        "description": "User's profile avatar url"
+                    },
+                    "accessToken": {
+                        "type": "string",
+                        "description": "User's access token"
+                    },
+                    "refreshToken": {
+                        "type": "string",
+                        "description": "User's refresh token"
+                    },
+                    "childrens": {
+                        "type": "array",
+                        "description": "User's children",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "gender": {
+                                    "type": "string"
+                                }
+                            }
+                        }
                     }
                 }
             },
