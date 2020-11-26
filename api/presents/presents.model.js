@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose');
 const PresentsSchema = new Schema({
   title: String,
   childId: { type: String, required: true },
-  bal: Number,
+  reward: Number,
   image: String,
   dateCreated: Date,
 });
