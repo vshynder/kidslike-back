@@ -6,7 +6,6 @@ require('dotenv').config();
 const cors = require('cors');
 const swaggerDocument = require('./swagger.json');
 
-const usersRouter = require('./api/users/users.router');
 const tokenRouter = require('./api/token/token.router');
 const tasksRouter = require('./api/tasks/tasks.router');
 const presentsRouter = require('./api/presents/presents.router');
@@ -38,7 +37,6 @@ class Server {
 
   initRoutes() {
     this.server.use('/api/auth', authRouter);
-    this.server.use('/api/users', usersRouter);
     this.server.use('/api/children', childrenRouter);
     this.server.use('/api/token', tokenRouter);
     this.server.use('/api/tasks', tasksRouter);
