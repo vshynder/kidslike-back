@@ -46,7 +46,7 @@ class AuthController {
       const verificationURL = `${
         process.env.HEROKU_URI
           ? process.env.HEROKU_URI
-          : 'http://localhost:1717/api/users/verify/'
+          : 'http://localhost:1717/api/auth/verify/'
       }${verificationToken}`;
       const msg = {
         to: user.email, // Change to your recipient
