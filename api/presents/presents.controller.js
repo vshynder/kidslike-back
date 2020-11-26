@@ -1,9 +1,8 @@
-const PresentsModel = require('./presents.model');
+const {PresentsModel} = require('./presents.model');
 const userModel = require('../users/users.model')
 const ChildrenSchema = require('../children/children.model');
 const {ChildrenModel} = require('../children/children.model');
-const { Types, SchemaType } = require('mongoose');
-const { types } = require('joi');
+
 
 class PresentsController {
 
@@ -37,23 +36,26 @@ try {
 
   async addPresent(req, res, next) {
     try {
-      let image;
+      
       const { title, childId, bal, file } = req.body;
-
+      // console.log(title, childId, bal );
       await ChildrenModel.findById(childId, async (err, child) => {
+        if(err){
+          console.log(err);
+        };
 
         const newPresent = await PresentsModel.create({
           title,
           childId,
           bal,
-          image,
+          // image,
           dateCreated: Date.now(),
         })
         
-        child.presents.push(newPresent);
+        child.presents.push(newPresent._id);
 
         let childPresent = await child.save();
-        res.status(200).send(childPresent);
+        res.status(200).send(newPresent);
       });
 
     } catch (err) {

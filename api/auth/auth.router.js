@@ -10,6 +10,7 @@ router.get('/google/callback',googleOAuth.loginFormGoogle.bind(googleOAuth),init
 router.get('/facebook',facebookOAuth.formQueryString.bind(facebookOAuth));
 router.get('/facebook/callback', facebookOAuth.loginFormFacebook.bind(facebookOAuth),initUser.bind());
 
+
 router.post('/login', LoginController.validateUserLogin, LoginController.login);
 router.get('/authorize', LoginController.authorize);
 router.delete('/logout', LoginController.authorize, LoginController.logout);

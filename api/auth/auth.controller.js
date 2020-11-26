@@ -26,13 +26,11 @@ class GoogleOAuthController {
       //get code from Google Service
       // get token
       const token = await this.getAccessTokenFromCode(req.query.code);
-      console.log('token:', token);
       if (!token) {
         res.status(404).send({ message: 'Not found token' });
       }
       //get userProfile
       const user = await this.getGoogleDriveFiles(token);
-      console.log('user1 :', user);
       if (!user) {
         res.status(404).send({ message: 'Not found' });
       }
@@ -172,7 +170,6 @@ exports.initUser = async function initifacationUser(req, res) {
       sid: user.id || user._id,
     });
 
-    console.log('session: ', session);
     const access_token = await jwt.sign(
       {
         id: user.id || user._id,
@@ -194,12 +191,21 @@ exports.initUser = async function initifacationUser(req, res) {
         expiresIn: '24h',
       },
     );
-    console.log('access_token:', access_token);
-    console.log('refresh_token:', refresh_token);
+   console.log('user :', user);
+   console.log('access_token :', access_token );
+   console.log('refresh_token :');
+
+
     return res.status(201).json({
+      user:{
+        _id:user._id,
+        username:user.username,
+        email:user.email,
+        avatarURL:user.avatarURL,
+        children:user.childrens
+      },
       access_token,
       refresh_token,
-      session,
     });
   } catch (error) {
     console.log(error);
