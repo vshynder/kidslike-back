@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const tasksController = require('./tasks.controller');
+const loginController = require('./../auth/login.controller');
 
 const router = Router();
 
@@ -15,10 +16,18 @@ router.patch(
 );
 
 router.patch('/repeat/:taskId', tasksController.repeatTask);
-router.patch('/confirm/:taskId', tasksController.confirmTask);
+router.patch(
+  '/confirm/:taskId',
+  loginController.authorize,
+  tasksController.confirmTask,
+);
 
 router.delete('/:taskId', tasksController.removeTask);
-router.patch('/notconfirm/:taskId', tasksController.notConfirmTask);
+router.patch(
+  '/notconfirm/:taskId',
+  loginController.authorize,
+  tasksController.notConfirmTask,
+);
 
 router.use('/', tasksController.getTasks);
 
