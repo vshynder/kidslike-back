@@ -10,7 +10,7 @@ const { ChildrenModel, ChildrenSchema } = require('../children/children.model');
 class Controllers {
   addHabbit = async (req, res, next) => {
     let { idChild } = req.body;
-    idChild = '5fb7ac03930dc826c4b85a32'; // Заглушка, Id ребенка
+    // idChild = '5fb7ac03930dc826c4b85a32'; // Заглушка, Id ребенка
     try {
       await ChildrenModel.findById(idChild, async (err, child) => {
         req.body.ownerHabbits = child.name;
@@ -119,20 +119,19 @@ class Controllers {
 
   deleteHabbit = async (req, res, next) => {
     try {
-      let { idHabbit } = req.body;
-      idHabbit = '5fb6a804f81dbf1d40e8d3d9'; // Заглушка, Id Habbit, Ожидается в req.body.idHabbit.
+      let idHabbit = req.params.idHabbit;
+      // idHabbit = '5fb6a804f81dbf1d40e8d3d9'; // Заглушка, Id Habbit, Ожидается в req.params.idHabbit.
 
-      await ChildrenModel.findOne(
-        {
-          'habbits._id': idHabbit,
-        },
-        async (err, child) => {
-          child.habbits = child.habbits.filter(
-            (habbit) => habbit.id !== idHabbit,
-          );
-          child.save();
-        },
-      );
+      let child = await ChildrenModel.findOne({
+        'habbits._id': idHabbit,
+      });
+
+      if (!child) {
+        return res.status(400).send('No Habbit');
+      }
+
+      child.habbits = child.habbits.filter((habbit) => habbit.id !== idHabbit);
+      child.save();
 
       return res.status(200).send('deleted');
     } catch (err) {

@@ -19,11 +19,7 @@ habbitsRouter.patch(
   habbitsController.updateHabbit,
 );
 
-habbitsRouter.delete(
-  '/delhabbit',
-  habbitsController.validIdHabbit,
-  habbitsController.deleteHabbit,
-);
+habbitsRouter.delete('/delhabbit/:idHabbit', habbitsController.deleteHabbit);
 
 habbitsRouter.patch(
   '/checkhabbit',
