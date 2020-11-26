@@ -1,9 +1,10 @@
-const PresentsModel = require('./presents.model');
+const {PresentsModel} = require('./presents.model');
 const userModel = require('../users/users.model')
 const ChildrenSchema = require('../children/children.model');
 const {ChildrenModel} = require('../children/children.model');
 const { Types, SchemaType } = require('mongoose');
 const { types } = require('joi');
+const multer = require('multer');
 
 class PresentsController {
 
@@ -37,8 +38,12 @@ try {
 
   async addPresent(req, res, next) {
     try {
-      let image;
-      const { title, childId, bal, file } = req.body;
+      req.child = { id: '5fbe5d5d25fad0371495570f' }; //Заглушка, очікування обьекта req.child з id
+      req.body.childId = req.child.id;
+      let { childId } = req.body;
+      const splitpatch = req.files ? req.files.map(e => (e.path)) : ""
+      const imagePath = splitpatch ? `http://localhost:1717/`+`${splitpatch}`.split('\\').slice().join('/') : "";
+      const { title, bal} = req.body;
 
       await ChildrenModel.findById(childId, async (err, child) => {
 
@@ -46,20 +51,21 @@ try {
           title,
           childId,
           bal,
-          image,
+          image: imagePath,
           dateCreated: Date.now(),
         })
         
         child.presents.push(newPresent);
 
-        let childPresent = await child.save();
-        res.status(200).send(childPresent);
+        await child.save();
+        res.status(200).send('Present added');
       });
 
     } catch (err) {
       next(err);
     }
   }
+
   async removePresent(req, res, next) {
     try {
       const { presentId } = req.params;
@@ -73,6 +79,18 @@ try {
   async buyPresent(req, res, next) {
     // test
   }
+
+  validPresent = (req, res, next) => {
+    const validator = Joi.object({
+      title: Joi.string().required(),
+      childId: Joi.string().required(),
+      bal: Joi.number().required(),
+      image: Joi.string(),
+      dateCreated: Joi.date(),
+    });
+    const { error } = validator.validate(req.body);
+    return error ? res.status(400).send(error.message) : next();
+  };
 }
 
 module.exports = new PresentsController();
