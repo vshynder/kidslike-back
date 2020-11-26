@@ -11,6 +11,10 @@ class PresentsController {
 
 async getAllPresentsChild(req,res){
 try {
+    const session = req.session;
+      if (!session) {
+        return res.status(404).send({ message: "Session was not found" });
+      }
 
     const {userId} = req.params  // принимает в строке запроса _id User
     console.log("userId =", userId);
@@ -41,6 +45,10 @@ try {
 
   async addPresent(req, res, next) {
     try {
+      const session = req.session;
+      if (!session) {
+        return res.status(404).send({ message: "Session was not found" });
+      }
       req.child = { id: '5fbe5d5d25fad0371495570f' }; //Заглушка, очікування обьекта req.child з id
       req.body.childId = req.child.id;
       let { childId } = req.body;
@@ -67,6 +75,10 @@ try {
 
   async removePresent(req, res, next) {
     try {
+      const session = req.session;
+      if (!session) {
+        return res.status(404).send({ message: "Session was not found" });
+      }
       const { presentId } = req.params;
       req.child = { id: '5fbe5d5d25fad0371495570f'}; //Заглушка, очікування обьекта req.child з id
       req.body.childId = req.child.id;
