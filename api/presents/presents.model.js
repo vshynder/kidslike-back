@@ -1,9 +1,9 @@
 const { Schema, model } = require('mongoose');
 
 const PresentsSchema = new Schema({
-  title: { type: String, required: true },
+  title: String,
   childId: { type: String, required: true },
-  bal: { type: Number, required: true },
+  bal: Number,
   image: String,
   dateCreated: Date,
 });
