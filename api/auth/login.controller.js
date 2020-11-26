@@ -61,11 +61,13 @@ class LoginController {
     try {
       const authorizationHeader = req.get('Authorization') || '';
       let token;
+
       if (authorizationHeader) {
         token = authorizationHeader.split(' ')[1];
       } else {
         res.status(400).send({ message: 'missing token' });
       }
+      console.log(process.env.TOKEN_SECRET);
       let verify;
       try {
         verify = await jwt.verify(token, process.env.TOKEN_SECRET);
