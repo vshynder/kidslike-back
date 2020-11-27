@@ -65,8 +65,8 @@ try {
         dateCreated: Date.now(),
       })
       const newPresent = await PresentsModel.find();
-      const presentId = newPresent.map(e=>(e._id));
-      await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: presentId}},{ upsert:true, returnNewDocument : true });
+      // const presentId = newPresent.map(e=>(e._id));
+      await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: newPresent}},{ upsert:true, returnNewDocument : true });
       res.status(200).send('Present added');
     } catch (err) {
       next(err);
@@ -88,8 +88,8 @@ try {
         const result = await PresentsModel.findByIdAndDelete(presentId);
         if (!result) return res.status(404).send({ message: 'Not found' });
         const newPresent = await PresentsModel.find();
-        const newPresentId = newPresent.map(e=>(e._id));
-        await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: newPresentId}},{ upsert:true, returnNewDocument : true });
+        // const newPresentId = newPresent.map(e=>(e._id));
+        await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: newPresent}},{ upsert:true, returnNewDocument : true });
         return res.status(201).send("Present deleted"); 
       }
     } catch (err) {
