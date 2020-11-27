@@ -15,7 +15,11 @@ router.patch(
   tasksController.updateTask,
 );
 
-router.patch('/repeat/:taskId', tasksController.repeatTask);
+router.patch(
+  '/repeat/:taskId',
+  loginController.authorize,
+  tasksController.repeatTask,
+);
 router.patch(
   '/confirm/:taskId',
   loginController.authorize,
