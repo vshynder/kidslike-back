@@ -4,7 +4,7 @@ const { v4: uuid } = require('uuid');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const { ObjectId } = require('mongodb');
-const UserModel = require('./users.model');
+const UserModel = require('../users/users.model');
 const defaultAvatar =
   'https://code-is-poetry.ru/wp-content/plugins/all-in-one-seo-pack-pro/images/default-user-image.png';
 
@@ -23,8 +23,6 @@ class AuthController {
         password: hashPassword,
         avatarURL: defaultAvatar,
       });
-
-      // дописать сессию, к ней подвязать айди пользователя, в токен вшить айди пользователя, в рефреш токен вшить айди сессии
 
       await AuthController.sendVerifyEmail(createUser);
       return res.send({
@@ -48,7 +46,7 @@ class AuthController {
       const verificationURL = `${
         process.env.HEROKU_URI
           ? process.env.HEROKU_URI
-          : 'http://localhost:1717/api/users/verify/'
+          : 'http://localhost:1717/api/auth/verify/'
       }${verificationToken}`;
       const msg = {
         to: user.email, // Change to your recipient
@@ -59,7 +57,7 @@ class AuthController {
                 <h2>Hello ${user.username}</h2>
                 <p>Welcome to Kidslike v2 service, we will help you instill good habits in your children</p>
                 <br></br>
-                <p>To start, you need to verify your account, that's not difficult, just click on this link ${verificationURL} and sign in to your account</P>
+                <p>To start, you need to verify your account, that's not difficult, just click on <a href=${verificationURL}>This LINK</a> and sign in to your account</P>
                 `,
       };
       console.log(verificationURL);
@@ -85,9 +83,9 @@ class AuthController {
 
   validateCreateUser(req, res, next) {
     const validSchema = Joi.object({
-      username: Joi.string().required(),
-      email: Joi.string().required(),
-      password: Joi.string().required(),
+      username: Joi.string().empty().max(50).required(),
+      email: Joi.string().email().empty().max(50).required(),
+      password: Joi.string().empty().max(50).required(),
     });
     AuthController.checkValidateError(validSchema, req, res, next);
   }

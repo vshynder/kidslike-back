@@ -1,10 +1,10 @@
 const { Schema, model } = require('mongoose');
 
 const PresentsSchema = new Schema({
-  title: { type: String, required: true },
+  title:{ type: String, required: true },
   childId: { type: String, required: true },
-  bal: { type: Number, required: true },
-  image: { type: String,},
+  reward: { type: Number, required: true },
+  image: { type: String, },
   dateCreated: Date,
 });
 
