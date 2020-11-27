@@ -2,12 +2,6 @@ const { Schema, model } = require('mongoose');
 
 const { HabbitsSchema } = require('../habbits/habbits.model');
 
-const TasksSchema = {}; // Заглушка
-// const { TaskSchema } = require('../tasks/tasks.model');
-
-const {PresentsSchema} = require('../presents/presents.model'); // Заглушка
-// const { PresentsSchema } = require('../presents/presents.model');
-
 const ChildrenSchema = new Schema({
   idUser: { type: String, required: true },
   name: { type: String },
@@ -18,8 +12,8 @@ const ChildrenSchema = new Schema({
   },
   stars: { type: Number, default: 0 },
   habbits: [HabbitsSchema],
-  tasks: [TasksSchema],
-  presents: [PresentsSchema],
+  tasks: [{ type: ObjectId, ref: 'Tasks' }],
+  presents: [{ type: ObjectId, ref: 'Presents' }],
 });
 
 exports.ChildrenModel = model('Children', ChildrenSchema);
