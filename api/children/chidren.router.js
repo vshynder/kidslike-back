@@ -1,12 +1,12 @@
 const express = require('express');
 const childrenRouter = express.Router();
 const childrenController = require('./children.controller');
-// const authController = require('../auth/auth.controller');
+const LoginController = require('../auth/login.controller');
 
 childrenRouter.post(
   '/addchild',
   childrenController.validChild,
   childrenController.addChild,
-); // authController.authorization
+); // LoginController.authorize // <= ДОБАВИТЬ!!!
 
 module.exports = childrenRouter;
