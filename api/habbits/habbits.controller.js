@@ -5,8 +5,8 @@ const {
   Types: { ObjectId },
 } = require('mongoose');
 
-const { ChildrenModel, ChildrenSchema } = require('../children/children.model');
-const { send } = require('@sendgrid/mail');
+const { ChildrenModel } = require('../children/children.model');
+// const { send } = require('@sendgrid/mail');
 
 class Controllers {
   addHabbit = async (req, res, next) => {
@@ -32,7 +32,7 @@ class Controllers {
 
   getAllHabbitsChildrenByUser = async (req, res, next) => {
     try {
-      req.user = { _id: '5fb313842e5c6c182c9b214f' }; //Заглушка, ожидает обьект req.user с полем id Родителя ???
+      // req.user = { _id: '5fb313842e5c6c182c9b214f' }; //Заглушка, ожидает обьект req.user с полем id Родителя ???
       req.body.idUser = req.user._id;
 
       const allChildrenByUser = await ChildrenModel.find({

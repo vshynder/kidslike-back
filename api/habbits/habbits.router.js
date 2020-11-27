@@ -5,34 +5,39 @@ const LoginController = require('../auth/login.controller');
 
 habbitsRouter.post(
   '/addhabbit',
+  LoginController.authorize,
   habbitsController.validIdChild,
   habbitsController.validAddHabit,
   habbitsController.addHabbit,
-); // LoginController.authorize // <= ДОБАВИТЬ!!!
+);
 
 habbitsRouter.get(
   '/getallhabbitsuser',
+  LoginController.authorize,
   habbitsController.getAllHabbitsChildrenByUser,
-); // LoginController.authorize // <= ДОБАВИТЬ!!!
+);
 
 habbitsRouter.patch(
   '/updatehabbit',
+  LoginController.authorize,
   habbitsController.validUpdateHabbit,
   habbitsController.validIdHabbit,
   habbitsController.updateHabbit,
-); // LoginController.authorize // <= ДОБАВИТЬ!!!
+);
 
 habbitsRouter.delete(
   '/delhabbit/:idHabbit',
+  LoginController.authorize,
   habbitsController.validDeleteHabbit,
   habbitsController.deleteHabbit,
-); // LoginController.authorize // <= ДОБАВИТЬ!!!
+);
 
 habbitsRouter.patch(
   '/checkhabbit',
+  LoginController.authorize,
   habbitsController.validCheckHabbit,
   habbitsController.validIdHabbit,
   habbitsController.checkHabbit,
-); // LoginController.authorize // <= ДОБАВИТЬ!!!
+);
 
 module.exports = habbitsRouter;

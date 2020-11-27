@@ -5,8 +5,9 @@ const LoginController = require('../auth/login.controller');
 
 childrenRouter.post(
   '/addchild',
+  LoginController.authorize,
   childrenController.validChild,
   childrenController.addChild,
-); // LoginController.authorize // <= ДОБАВИТЬ!!!
+);
 
 module.exports = childrenRouter;

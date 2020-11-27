@@ -10,7 +10,7 @@ class Controllers {
         return res.status(409).send(`Child with this name exists`);
       }
 
-      req.user = { _id: '5fb313842e5c6c182c9b214f' }; //Заглушка, ожидает обьект req.user с полем _id Родителя
+      // req.user = { _id: '5fb313842e5c6c182c9b214f' }; //Заглушка, ожидает обьект req.user с полем _id Родителя
 
       req.body.idUser = req.user._id;
       const child = await ChildrenModel.create(req.body);
