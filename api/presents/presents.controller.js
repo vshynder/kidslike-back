@@ -1,14 +1,20 @@
-const PresentsModel = require('./presents.model');
+const {PresentsModel} = require('./presents.model');
 const userModel = require('../users/users.model')
 const ChildrenSchema = require('../children/children.model');
 const {ChildrenModel} = require('../children/children.model');
 const { Types, SchemaType } = require('mongoose');
-const { types } = require('joi');
+const { ObjectId } = require('mongoose').Types;
+// const { types } = require('joi');
+const Joi = require('joi');
 
 class PresentsController {
 
 async getAllPresentsChild(req,res){
 try {
+    const session = req.session;
+      if (!session) {
+        return res.status(404).send({ message: "Session was not found" });
+      }
 
     const {userId} = req.params  // принимает в строке запроса _id User
     console.log("userId =", userId);
@@ -35,37 +41,57 @@ try {
 } 
 }
 
+
+
   async addPresent(req, res, next) {
     try {
-      let image;
-      const { title, childId, bal, file } = req.body;
-
-      await ChildrenModel.findById(childId, async (err, child) => {
-
-        const newPresent = await PresentsModel.create({
-          title,
-          childId,
-          bal,
-          image,
-          dateCreated: Date.now(),
-        })
-        
-        child.presents.push(newPresent);
-
-        let childPresent = await child.save();
-        res.status(200).send(childPresent);
-      });
-
+      const session = req.session;
+      if (!session) {
+        return res.status(404).send({ message: "Session was not found" });
+      }
+      req.child = { id: '5fbe5d5d25fad0371495570f' }; //Заглушка, очікування обьекта req.child з id
+      req.body.childId = req.child.id;
+      let { childId } = req.body;
+      const findsId = (id) => {return ChildrenModel.find({_id:id})};
+      if(!findsId(childId))return res.status(404).send({ message: 'Not found' });
+      const splitpatch = req.files ? req.files.map(e => (e.path)) : ""
+      const imagePath = splitpatch ? `http://localhost:1717/`+`${splitpatch}`.split('\\').slice(3).join('/') : "";
+      const { title, reward} = req.body;
+      await PresentsModel.create({
+        title,
+        childId,
+        reward,
+        image: imagePath,
+        dateCreated: Date.now(),
+      })
+      const newPresent = await PresentsModel.find();
+      const presentId = newPresent.map(e=>(e._id));
+      await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: presentId}},{ upsert:true, returnNewDocument : true });
+      res.status(200).send('Present added');
     } catch (err) {
       next(err);
     }
   }
+
   async removePresent(req, res, next) {
     try {
+      const session = req.session;
+      if (!session) {
+        return res.status(404).send({ message: "Session was not found" });
+      }
       const { presentId } = req.params;
-      const result = await PresentsModel.findByIdAndDelete(presentId);
-      if (!result) return res.status(404).send({ message: 'Not found' });
-      return res.status(201).send('Present deleted');
+      req.child = { id: '5fbe5d5d25fad0371495570f'}; //Заглушка, очікування обьекта req.child з id
+      req.body.childId = req.child.id;
+      let { childId } = req.body;
+      if (ObjectId.isValid(presentId)) {
+        console.log(presentId)
+        const result = await PresentsModel.findByIdAndDelete(presentId);
+        if (!result) return res.status(404).send({ message: 'Not found' });
+        const newPresent = await PresentsModel.find();
+        const presentId = newPresent.map(e=>(e._id));
+        await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: presentId}},{ upsert:true, returnNewDocument : true });
+        return res.status(201).send("Present deleted"); 
+      }
     } catch (err) {
       next(err);
     }
@@ -73,6 +99,19 @@ try {
   async buyPresent(req, res, next) {
     // test
   }
+
+
+  validPresent = (req, res, next) => {
+    const validator = Joi.object({
+      title: Joi.string(),
+      childId: Joi.string().required(),
+      reward: Joi.number(),
+      image: Joi.string(),
+      dateCreated: Joi.date(),
+    });
+    const { error } = validator.validate(req.body);
+    return error ? res.status(400).send(error.message) : next();
+  };
 }
 
 module.exports = new PresentsController();

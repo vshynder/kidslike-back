@@ -3,9 +3,455 @@
     "info": {
         "version": "1.0.0",
         "title": "Kidslike v2 API",
-        "description": "This is a server for a Kidslike app."
+        "description": "This is a server for a Kidslike app.",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "tags": [
+            {
+                "name": "Авторизация"
+            },
+            {
+                "name": "Пользователь"
+            },
+            {
+                "name": "Ребенок"
+            },
+            {
+                "name": "Задачи"
+            },
+            {
+                "name": "Привычки"
+            },
+            {
+                "name": "Подарки"
+            }
+        ]
     },
     "paths": {
+        "/api/users/register": {
+            "post": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "operationId": "Get",
+                "summary": "Регистрация пользователя",
+                "description": "Зарегистрировать нового пользователя",
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Объект данных для регистрации пользователя",
+                        "schema": {
+                            "$ref": "#/components/schemas/register"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Пользователь создан",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/registerSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка создания пользователя"
+                    },
+                    "409": {
+                        "description": "User already exists"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "operationId": "Post",
+                "summary": "Залогинить пользователя",
+                "description": "Залогинить пользователя",
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "description": "Объект данных для входа",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/login"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Авторизация прошла успешна",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/loginSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка авторизации"
+                    }
+                }
+            }
+        },
+        "api/auth/logout": {
+            "delete": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Разлогинить пользователя",
+                "operationId": "Post",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Операция прошла успешно",
+                        "content": "application/json"
+                    },
+                    "400": {
+                        "description": "Нет заголовка с токеном авторизации",
+                        "content": "application/json"
+                    },
+                    "401": {
+                        "description": "Токен авторизации невалидный",
+                        "content": "application/json"
+                    },
+                    "404": {
+                        "description": "Пользователь/сессия не найдены",
+                        "content": "application/json"
+                    }
+                }
+            }
+        },
+        "/api/auth/google": {
+            "get": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "operationId": "Get",
+                "summary": "Авторизация через google",
+                "description": "Перенаправляет на сервис регистрации через google",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Авторизация прошла успешна",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/OAuthSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка авторизации"
+                    }
+                }
+            }
+        },
+        "/api/auth/facebook": {
+            "get": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "operationId": "Get",
+                "summary": "Авторизация через facebook",
+                "description": "перенаправляет на сервис регистрации через facebook",
+                "responses": {
+                    "200": {
+                        "description": "Авторизация прошла успешна",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/OAuthSuccess"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка авторизации"
+                    }
+                }
+            }
+        },
+        "/api/children/addchild": {
+            "post": {
+                "tags": [
+                    "Ребенок"
+                ],
+                "operationId": "Post",
+                "summary": "Добавить ребенка",
+                "description": "Добавить ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "description": "Объект данных ребенка",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/addChild"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Ребенок добавлен",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/addChildResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка добавления ребенка"
+                    },
+                    "401": {
+                        "description": "Нет заголовка с токеном авторизации"
+                    }
+                }
+            }
+        },
+        "/api/habbits/addhabbit": {
+            "post": {
+                "tags": [
+                    "Привычки"
+                ],
+                "operationId": "Post",
+                "summary": "Добавить привычку",
+                "description": "",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Объект данных для добавления привычки ребенка",
+                        "schema": {
+                            "$ref": "#/components/schemas/addHabbit"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Habbit created succesful.",
+                        "schema": {
+                            "$ref": "#/components/schemas/addHabbitResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/habbits/getallhabbitsuser": {
+            "get": {
+                "tags": [
+                    "Привычки"
+                ],
+                "operationId": "Get",
+                "summary": "",
+                "description": "",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Req.user.id",
+                        "in": "body",
+                        "type": "string",
+                        "description": "User's Id ",
+                        "required": true
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/components/schemas/getAllHabbits"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/habbits/updatehabbit": {
+            "patch": {
+                "tags": [
+                    "Привычки"
+                ],
+                "operationId": "Patch",
+                "summary": "",
+                "description": "",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Data object to update the habbit",
+                        "schema": {
+                            "$ref": "#/components/schemas/updateHabbit "
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/components/schemas/addHabbitResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/habbits/checkhabbit": {
+            "patch": {
+                "tags": [
+                    "Привычки"
+                ],
+                "operationId": "Patch",
+                "summary": "",
+                "description": "",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/components/schemas/checkHabbit"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/components/schemas/checkHabbitResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/habbits/delhabbit": {
+            "delete": {
+                "tags": [
+                    "Привычки"
+                ],
+                "operationId": "Delete",
+                "summary": "Удалить привычку",
+                "description": "Удаление привычки ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Habbit's Id",
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "idHabbit": "string"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Habbit deleted successful."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
         "/api/tasks": {
             "get": {
                 "tags": [
@@ -31,7 +477,9 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "api/tasks/:childId": {
             "post": {
                 "tags": [
                     "Задача"
@@ -45,17 +493,12 @@
                 "produces": [],
                 "parameters": [
                     {
-                        "name": "task",
+                        "name": "Task",
                         "description": "Объект данных задачи ребенка",
                         "in": "body",
-                        "required": false,
+                        "required": true,
                         "schema": {
-                            "type": "object",
-                            "example": {
-                                "title": "string",
-                                "reward": "number",
-                                "daysToDo": "number"
-                            }
+                            "$ref": "#/components/schemas/addTask"
                         }
                     },
                     {
@@ -67,13 +510,20 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "Задача добавлена"
+                        "description": "Задача добавлена",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/addTaskResponse"
+                        }
                     },
                     "400": {
                         "description": "Ошибка создания задачи "
                     },
                     "401": {
                         "description": "Нет заголовка с токеном авторизации"
+                    },
+                    "404": {
+                        "description": "Ребенок не найден"
                     }
                 }
             }
@@ -158,7 +608,678 @@
                     }
                 }
             }
+        },
+        "/api/tasks/confirm/:taskId": {
+            "patch": {
+                "tags": [
+                    "Задача"
+                ],
+                "operationId": "Patch",
+                "summary": "Подтвердить задачу",
+                "description": "Подтверждение задачи ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "description": "Объект данных задачи ребенка",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "title": "string",
+                                "reward": "number",
+                                "daysToDo": "number"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Задача изменена"
+                    },
+                    "400": {
+                        "description": "Ошибка изменения задачи "
+                    },
+                    "401": {
+                        "description": "Нет заголовка с токеном авторизации"
+                    }
+                }
+            }
+        },
+        "/api/tasks/notconfirm/:taskId": {
+            "patch": {
+                "tags": [
+                    "Задача"
+                ],
+                "operationId": "Patch",
+                "summary": "Невыполнение задачи",
+                "description": "Отметить невыполненной задачу ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "description": "Объект данных задачи ребенка",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "title": "string",
+                                "reward": "number",
+                                "daysToDo": "number"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Задача изменена"
+                    },
+                    "400": {
+                        "description": "Ошибка изменения задачи "
+                    },
+                    "401": {
+                        "description": "Нет заголовка с токеном авторизации"
+                    }
+                }
+            }
+        },
+        "/api/tasks/repeat/:taskId": {
+            "patch": {
+                "tags": [
+                    "Задача"
+                ],
+                "operationId": "Patch",
+                "summary": "Повторить задачу",
+                "description": "Повторить задачу ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "task",
+                        "description": "Объект данных задачи ребенка",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "type": "object",
+                            "example": {
+                                "title": "string",
+                                "reward": "number",
+                                "daysToDo": "number"
+                            }
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Задача изменена"
+                    },
+                    "400": {
+                        "description": "Ошибка изменения задачи "
+                    },
+                    "401": {
+                        "description": "Нет заголовка с токеном авторизации"
+                    }
+                }
+            }
+        },
+        "/api/presents/addPresent": {
+            "post": {
+                "tags": [
+                    "Подарки"
+                ],
+                "operationId": "Post",
+                "summary": "Добавление подарка",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Объект данных для добавления подарка",
+                        "schema": {
+                            "$ref": "#/components/schemas/addPresent"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/presents/buyPresent": {
+            "post": {
+                "tags": [
+                    "Подарки"
+                ],
+                "operationId": "Post",
+                "summary": "Покупка подарка (Еще не написана)",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "Request body",
+                        "in": "body",
+                        "required": true,
+                        "description": "Объект данных для покупки подарка"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/presents/:presentId": {
+            "delete": {
+                "tags": [
+                    "Подарки"
+                ],
+                "operationId": "Delete",
+                "summary": "Удаление подарка",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "Present's Id",
+                        "in": "path",
+                        "type": "string",
+                        "required": true,
+                        "description": "Present's Id"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Present deleted successful"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/presents/:userId": {
+            "get": {
+                "tags": [
+                    "Подарки"
+                ],
+                "operationId": "Get",
+                "summary": "Получение подарков",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "User Id",
+                        "in": "path",
+                        "type": "string",
+                        "required": true,
+                        "description": "принимает в строке запроса _id User"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Токен",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/getPresents"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
         }
     },
-    "definitions": {}
+    "components": {
+        "schemas": {
+            "OAuthSuccess": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "_id": {
+                                "type": "string"
+                            },
+                            "username": {
+                                "type": "string"
+                            },
+                            "email": {
+                                "type": "string"
+                            },
+                            "avatarURL": {
+                                "type": "string"
+                            },
+                            "childrens": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "objectId": {
+                                            "type": "string",
+                                            "desctiption": "ObjectId"
+                                        }
+                                    }
+                                }
+                            },
+                            "access_token": {
+                                "type": "string"
+                            },
+                            "refresh_token": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "register": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "decription": "User's name"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "User's email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User's password"
+                    }
+                }
+            },
+            "registerSuccess": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "object",
+                        "decription": "Data object after successful registration",
+                        "properties": {
+                            "username": {
+                                "type": "string",
+                                "decription": "User's name"
+                            },
+                            "avatarURL": {
+                                "type": "string",
+                                "description": "User's profile avatar url"
+                            }
+                        }
+                    }
+                }
+            },
+            "login": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User's email"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "User's password"
+                    }
+                }
+            },
+            "loginSuccess": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "decription": "User's name"
+                    },
+                    "avatarURL": {
+                        "type": "string",
+                        "description": "User's profile avatar url"
+                    },
+                    "accessToken": {
+                        "type": "string",
+                        "description": "User's access token"
+                    },
+                    "refreshToken": {
+                        "type": "string",
+                        "description": "User's refresh token"
+                    },
+                    "childrens": {
+                        "type": "array",
+                        "description": "User's children",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "gender": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "addChild": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "gender"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "decription": "Child's gender",
+                        "enum": [
+                            "male",
+                            "female"
+                        ]
+                    }
+                }
+            },
+            "addChildResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "gender": {
+                        "type": "string"
+                    }
+                }
+            },
+            "addHabbit": {
+                "type": "object",
+                "properties": {
+                    "nameHabbit": {
+                        "type": "string"
+                    },
+                    "priceHabbit": {
+                        "type": "string"
+                    },
+                    "ownerHabbits": {
+                        "type": "number"
+                    },
+                    "idChild": {
+                        "type": "string"
+                    },
+                    "sprintHabbit": {
+                        "type": "string",
+                        "required": true,
+                        "default": "1111111111"
+                    },
+                    "genderChild": {
+                        "type": "string"
+                    }
+                }
+            },
+            "addHabbitResponse": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "type": "string"
+                    },
+                    "nameHabbit": {
+                        "type": "string"
+                    },
+                    "priceHabbit": {
+                        "type": "string"
+                    },
+                    "ownerHabbits": {
+                        "type": "number"
+                    },
+                    "idChild": {
+                        "type": "string"
+                    },
+                    "sprintHabbit": {
+                        "type": "string",
+                        "required": true,
+                        "default": "1111111111"
+                    },
+                    "genderChild": {
+                        "type": "string"
+                    }
+                }
+            },
+            "updateHabbit": {
+                "type": "object",
+                "properties": {
+                    "nameHabbit": {
+                        "type": "string"
+                    },
+                    "priceHabbit": {
+                        "type": "number"
+                    },
+                    "idHabbit": {
+                        "type": "string"
+                    },
+                    "idNewChildOwnerHabbit": {
+                        "type": "string"
+                    }
+                }
+            },
+            "checkHabbit": {
+                "type": "object",
+                "properties": {
+                    "idHabbit": {
+                        "type": "string"
+                    },
+                    "confirmed": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "checkHabbitResponse": {
+                "type": "object",
+                "properties": {
+                    "completed": {
+                        "type": "boolean"
+                    },
+                    "bonus": {
+                        "type": "boolean"
+                    },
+                    "newSprintHabbit": {
+                        "type": "string"
+                    }
+                }
+            },
+            "getAllHabbits": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "_id": {
+                            "type": "string"
+                        },
+                        "nameHabbit": {
+                            "type": "string"
+                        },
+                        "priceHabbit": {
+                            "type": "string"
+                        },
+                        "ownerHabbits": {
+                            "type": "number"
+                        },
+                        "idChild": {
+                            "type": "string"
+                        },
+                        "sprintHabbit": {
+                            "type": "string",
+                            "required": true,
+                            "default": "1111111111"
+                        },
+                        "genderChild": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "task": {},
+            "addTask": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "reward"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "reward": {
+                        "type": "number"
+                    },
+                    "daysToDo": {
+                        "type": "number"
+                    }
+                }
+            },
+            "addTaskResponse": {
+                "type": "object",
+                "properties": {
+                    "isCompleted": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "done",
+                            "undone"
+                        ]
+                    },
+                    "_id": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "reward": {
+                        "type": "number"
+                    },
+                    "daysToDo": {
+                        "type": "number"
+                    },
+                    "startDay": {
+                        "type": "string",
+                        "decription": "The day when task started"
+                    },
+                    "finishDay": {
+                        "type": "string",
+                        "decription": "The day when task finished"
+                    },
+                    "childId": {
+                        "type": "string"
+                    }
+                }
+            },
+            "addPresent": {
+                "type": "object",
+                "required:": [
+                    "title",
+                    "childId",
+                    "bal"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "childId": {
+                        "type": "string"
+                    },
+                    "bal": {
+                        "type": "number"
+                    }
+                }
+            },
+            "getPresents": {
+                "type": "array",
+                "description": "Array of presents",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string"
+                        },
+                        "childId": {
+                            "type": "string"
+                        },
+                        "bal": {
+                            "type": "number"
+                        },
+                        "image": {
+                            "type": "string"
+                        },
+                        "dateCreated": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
