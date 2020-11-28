@@ -14,8 +14,10 @@ class TaskController {
 
   async addTask(req, res, next) {
     try {
+      const { childId } = req.params;
+      const { title, reward, daysToDo } = req.body;
+
       const millisecondsInADay = 86400000;
-      const { title, reward, daysToDo, childId } = req.body;
       const finishDay = daysToDo
         ? Date.now() + millisecondsInADay * daysToDo
         : null;
@@ -122,18 +124,16 @@ class TaskController {
       if (!task) {
         return res.status(404).send({ message: 'Not found' });
       }
-      await ChildrenModel.findById(task.childId, async (err, child) => {
-        console.log('TASKID', taskId);
-        console.log('CHILD', child);
-        console.log('CHILD TASKS', child.tasks);
-        child.tasks.filter((task) => {
-          task.id !== taskId;
-        });
-        child.save();
-      });
 
-      // return res.status(200).send({ message: 'Task deleted' });
-      return res.status(200).send('ok');
+      await ChildrenModel.findByIdAndUpdate(
+        task.childId,
+        { $pull: { tasks: taskId } },
+        { new: true },
+      );
+
+      await TaskModel.findByIdAndDelete(taskId);
+
+      return res.status(200).send({ message: 'Task deleted' });
     } catch (error) {
       next(error);
     }
@@ -144,7 +144,6 @@ class TaskController {
       title: Joi.string().required(),
       reward: Joi.number().required(),
       daysToDo: Joi.number(),
-      childId: Joi.string().required(),
     });
 
     TaskController.checkValidationError(addSchemaValidator, req, res, next);
@@ -155,7 +154,6 @@ class TaskController {
       title: Joi.string(),
       reward: Joi.number(),
       daysToDo: Joi.number(),
-      childId: Joi.string(),
     });
 
     TaskController.checkValidationError(updateSchemaRules, req, res, next);
