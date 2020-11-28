@@ -1,12 +1,25 @@
 const TaskModel = require('./tasks.model');
-const ChildrenModel = require('../children/children.model');
+const { ChildrenModel } = require('../children/children.model');
 const Joi = require('joi');
 
 class TaskController {
   async getTasks(req, res, next) {
     try {
-      const userId = '5fb58ca77df3612673e62e11';
-      const tasks = await TaskModel.find();
+      const userId = req.user.id;
+      const children = await ChildrenModel.find({ idUser: userId });
+      if (!children) {
+        return res
+          .status(404)
+          .send({ message: 'Children of the user not found' });
+      }
+
+      const arrOfTasks = children.reduce((acc, child) => {
+        acc.push(...child.tasks);
+        return acc;
+      }, []);
+
+      const tasks = await TaskModel.find({ _id: { $in: arrOfTasks } });
+
       return res.status(200).send(tasks);
     } catch (error) {
       next(error);
@@ -15,11 +28,10 @@ class TaskController {
 
   async addTask(req, res, next) {
     try {
-      const childId = req.params.childId;
-
-      const millisecondsInADay = 86400000;
+      const { childId } = req.params;
       const { title, reward, daysToDo } = req.body;
 
+      const millisecondsInADay = 86400000;
       const finishDay = daysToDo
         ? Date.now() + millisecondsInADay * daysToDo
         : null;
@@ -32,6 +44,12 @@ class TaskController {
         finishDay,
         childId,
       });
+
+      await ChildrenModel.findById(childId, async (err, children) => {
+        await children.tasks.push(task.id);
+        await children.save();
+      });
+
       return res.status(201).send(task);
     } catch (error) {
       next(error);
@@ -47,7 +65,7 @@ class TaskController {
         : null;
 
       const updated = daysToDo
-        ? { startDay: Date.now(), finishDay }
+        ? { startDay: Date.now(), finishDay, ...req.body }
         : { startDay: null, finishDay: null, ...req.body };
 
       const updatedTask = await TaskModel.findByIdAndUpdate(
@@ -115,11 +133,20 @@ class TaskController {
   }
   async removeTask(req, res, next) {
     try {
-      const contact = await TaskModel.findByIdAndDelete(req.params.taskId);
-
-      if (!contact) {
+      const { taskId } = req.params;
+      const task = await TaskModel.findById(taskId);
+      if (!task) {
         return res.status(404).send({ message: 'Not found' });
       }
+
+      await ChildrenModel.findByIdAndUpdate(
+        task.childId,
+        { $pull: { tasks: taskId } },
+        { new: true },
+      );
+
+      await TaskModel.findByIdAndDelete(taskId);
+
       return res.status(200).send({ message: 'Task deleted' });
     } catch (error) {
       next(error);
@@ -138,8 +165,8 @@ class TaskController {
 
   updateTaskValidation(req, res, next) {
     const updateSchemaRules = Joi.object({
-      title: Joi.string().required(),
-      reward: Joi.number().required(),
+      title: Joi.string(),
+      reward: Joi.number(),
       daysToDo: Joi.number(),
     });
 
