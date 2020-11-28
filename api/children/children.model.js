@@ -18,8 +18,8 @@ const ChildrenSchema = new Schema({
   },
   stars: { type: Number, default: 0 },
   habbits: [HabbitsSchema],
-  tasks: [TasksSchema],
-  presents: [PresentsSchema],
+  tasks: [{ type: ObjectId, ref: 'Tasks' }],
+  presents: [{ type: ObjectId, ref: 'Presents' }],
 });
 
 exports.ChildrenModel = model('Children', ChildrenSchema);
