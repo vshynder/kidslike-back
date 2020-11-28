@@ -30,12 +30,11 @@
         ]
     },
     "paths": {
-        "/api/users/register": {
+        "/api/auth/register": {
             "post": {
                 "tags": [
                     "Авторизация"
                 ],
-                "operationId": "Get",
                 "summary": "Регистрация пользователя",
                 "description": "Зарегистрировать нового пользователя",
                 "parameters": [
@@ -71,7 +70,6 @@
                 "tags": [
                     "Авторизация"
                 ],
-                "operationId": "Post",
                 "summary": "Залогинить пользователя",
                 "description": "Залогинить пользователя",
                 "parameters": [
@@ -105,7 +103,6 @@
                     "Авторизация"
                 ],
                 "summary": "Разлогинить пользователя",
-                "operationId": "Post",
                 "consumes": [
                     "application/json"
                 ],
@@ -139,7 +136,6 @@
                 "tags": [
                     "Авторизация"
                 ],
-                "operationId": "Get",
                 "summary": "Авторизация через google",
                 "description": "Перенаправляет на сервис регистрации через google",
                 "parameters": [],
@@ -162,7 +158,6 @@
                 "tags": [
                     "Авторизация"
                 ],
-                "operationId": "Get",
                 "summary": "Авторизация через facebook",
                 "description": "перенаправляет на сервис регистрации через facebook",
                 "responses": {
@@ -179,12 +174,41 @@
                 }
             }
         },
+        "/api/auth/current": {
+            "get": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Получить текущего пользователя",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "accessToken",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/components/schemas/current"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
         "api/token/token_refresh": {
             "post": {
                 "tags": [
                     "Авторизация"
                 ],
-                "operationId": "Post",
                 "summary": "Получить новую пару токенов",
                 "description": "После отправления на сервер refresh_token получает новую пару токенов access и refresh",
                 "parameters": [
@@ -219,7 +243,6 @@
                 "tags": [
                     "Ребенок"
                 ],
-                "operationId": "Post",
                 "summary": "Добавить ребенка",
                 "description": "Добавить ребенка пользователя",
                 "consumes": [
@@ -265,7 +288,6 @@
                 "tags": [
                     "Привычки"
                 ],
-                "operationId": "Post",
                 "summary": "Добавить привычку",
                 "description": "",
                 "consumes": [
@@ -310,7 +332,6 @@
                 "tags": [
                     "Привычки"
                 ],
-                "operationId": "Get",
                 "summary": "Получить привычки",
                 "description": "Получение привычек всех детей пользователя",
                 "consumes": [
@@ -353,7 +374,6 @@
                 "tags": [
                     "Привычки"
                 ],
-                "operationId": "Patch",
                 "summary": "Редактировать привычку",
                 "description": "",
                 "consumes": [
@@ -398,7 +418,6 @@
                 "tags": [
                     "Привычки"
                 ],
-                "operationId": "Patch",
                 "summary": "Подтвердить привычку",
                 "description": "Подтверждение или невыполнение привычки на сегодня",
                 "consumes": [
@@ -443,7 +462,6 @@
                 "tags": [
                     "Привычки"
                 ],
-                "operationId": "Delete",
                 "summary": "Удалить привычку",
                 "description": "Удаление привычки ребенка пользователя",
                 "consumes": [
@@ -482,7 +500,6 @@
                 "tags": [
                     "Задача"
                 ],
-                "operationId": "Get",
                 "summary": "Получить все задачи",
                 "description": "Получение всех задач всех детей пользователя",
                 "parameters": [
@@ -499,6 +516,12 @@
                         "schema": {
                             "$ref": "#/components/schemas/tasks"
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
                     }
                 }
             }
@@ -508,7 +531,6 @@
                 "tags": [
                     "Задача"
                 ],
-                "operationId": "Post",
                 "summary": "Добавить задачу",
                 "description": "Добавить задачу ребенку пользователя",
                 "consumes": [
@@ -557,7 +579,6 @@
                 "tags": [
                     "Задача"
                 ],
-                "operationId": "Patch",
                 "summary": "Изменить задачу",
                 "description": "Изменить задачу ребенка пользователя",
                 "consumes": [
@@ -602,7 +623,6 @@
                 "tags": [
                     "Задача"
                 ],
-                "operationId": "Delete",
                 "summary": "Удалить задачу",
                 "description": "Удалить задачу ребенка пользователя",
                 "consumes": [
@@ -638,7 +658,6 @@
                 "tags": [
                     "Задача"
                 ],
-                "operationId": "Patch",
                 "summary": "Подтвердить задачу",
                 "description": "Подтверждение задачи ребенка пользователя",
                 "consumes": [
@@ -685,7 +704,6 @@
                 "tags": [
                     "Задача"
                 ],
-                "operationId": "Patch",
                 "summary": "Невыполнение задачи",
                 "description": "Отметить невыполненной задачу ребенка пользователя",
                 "consumes": [
@@ -732,7 +750,6 @@
                 "tags": [
                     "Задача"
                 ],
-                "operationId": "Patch",
                 "summary": "Повторить задачу",
                 "description": "Повторить задачу ребенка пользователя",
                 "consumes": [
@@ -779,7 +796,6 @@
                 "tags": [
                     "Подарки"
                 ],
-                "operationId": "Post",
                 "summary": "Добавление подарка",
                 "description": "",
                 "parameters": [
@@ -812,7 +828,6 @@
                 "tags": [
                     "Подарки"
                 ],
-                "operationId": "Post",
                 "summary": "Покупка подарка (Еще не написана)",
                 "description": "",
                 "parameters": [
@@ -842,7 +857,6 @@
                 "tags": [
                     "Подарки"
                 ],
-                "operationId": "Delete",
                 "summary": "Удаление подарка",
                 "description": "",
                 "parameters": [
@@ -879,7 +893,6 @@
                 "tags": [
                     "Подарки"
                 ],
-                "operationId": "Get",
                 "summary": "Получение подарков",
                 "description": "",
                 "parameters": [
@@ -1029,6 +1042,27 @@
                     "refreshToken": {
                         "type": "string",
                         "description": "User's refresh token"
+                    }
+                }
+            },
+            "current": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "avatarURL": {
+                        "type": "string"
+                    },
+                    "children": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "default": "ObjectId"
+                        }
+                    },
+                    "email": {
+                        "type": "string"
                     }
                 }
             },
