@@ -65,7 +65,7 @@ class TaskController {
         : null;
 
       const updated = daysToDo
-        ? { startDay: Date.now(), finishDay }
+        ? { startDay: Date.now(), finishDay, ...req.body }
         : { startDay: null, finishDay: null, ...req.body };
 
       const updatedTask = await TaskModel.findByIdAndUpdate(
