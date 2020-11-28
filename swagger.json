@@ -283,7 +283,7 @@
                 }
             }
         },
-        "/api/habbits/addhabbit": {
+        "/api/habbits": {
             "post": {
                 "tags": [
                     "Привычки"
@@ -325,9 +325,7 @@
                         "description": "Not found"
                     }
                 }
-            }
-        },
-        "/api/habbits/getallhabbitsuser": {
+            },
             "get": {
                 "tags": [
                     "Привычки"
@@ -359,6 +357,44 @@
                         "schema": {
                             "$ref": "#/components/schemas/getAllHabbits"
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/habbits/:idHabbit": {
+            "delete": {
+                "tags": [
+                    "Привычки"
+                ],
+                "summary": "Удалить привычку",
+                "description": "Удаление привычки ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Req.params",
+                        "in": "path",
+                        "required": true,
+                        "description": "Habbit's Id"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "accessToken",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Habbit deleted successful."
                     },
                     "401": {
                         "description": "Unauthorized"
@@ -447,44 +483,6 @@
                         "schema": {
                             "$ref": "#/components/schemas/checkHabbitResponse"
                         }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Not found"
-                    }
-                }
-            }
-        },
-        "/api/habbits/delhabbit/:idHabbit": {
-            "delete": {
-                "tags": [
-                    "Привычки"
-                ],
-                "summary": "Удалить привычку",
-                "description": "Удаление привычки ребенка пользователя",
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "Req.params",
-                        "in": "path",
-                        "required": true,
-                        "description": "Habbit's Id"
-                    },
-                    {
-                        "name": "Authorization",
-                        "in": "header",
-                        "type": "string",
-                        "description": "accessToken",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Habbit deleted successful."
                     },
                     "401": {
                         "description": "Unauthorized"
@@ -1054,7 +1052,7 @@
                     "avatarURL": {
                         "type": "string"
                     },
-                    "children": {
+                    "childrens": {
                         "type": "array",
                         "items": {
                             "type": "string",
