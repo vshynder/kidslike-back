@@ -26,7 +26,7 @@ habbitsRouter.patch(
 );
 
 habbitsRouter.delete(
-  '/delhabbit/:idHabbit',
+  '/:idHabbit',
   LoginController.authorize,
   habbitsController.validDeleteHabbit,
   habbitsController.deleteHabbit,

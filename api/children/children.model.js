@@ -1,12 +1,10 @@
-const { Schema, model , Types:{ObjectId}} = require('mongoose');
+const {
+  Schema,
+  model,
+  Types: { ObjectId },
+} = require('mongoose');
 
 const { HabbitsSchema } = require('../habbits/habbits.model');
-
-const TasksSchema = {}; // Заглушка
-// const { TaskSchema } = require('../tasks/tasks.model');
-
-const { PresentsSchema } = require('../presents/presents.model'); // Заглушка
-// const { PresentsSchema } = require('../presents/presents.model');
 
 const ChildrenSchema = new Schema({
   idUser: { type: String, required: true },
@@ -23,4 +21,3 @@ const ChildrenSchema = new Schema({
 });
 
 exports.ChildrenModel = model('Children', ChildrenSchema);
-exports.ChildrenSchema = ChildrenSchema;
