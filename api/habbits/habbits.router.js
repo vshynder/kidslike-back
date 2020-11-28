@@ -4,7 +4,7 @@ const habbitsController = require('./habbits.controller');
 const LoginController = require('../auth/login.controller');
 
 habbitsRouter.post(
-  '/addhabbit',
+  '/',
   LoginController.authorize,
   habbitsController.validIdChild,
   habbitsController.validAddHabit,
@@ -12,7 +12,7 @@ habbitsRouter.post(
 );
 
 habbitsRouter.get(
-  '/getallhabbitsuser',
+  '/',
   LoginController.authorize,
   habbitsController.getAllHabbitsChildrenByUser,
 );
