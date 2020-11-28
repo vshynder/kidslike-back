@@ -65,7 +65,7 @@ try {
       next(err);
     }
   }
-// надо переписать 
+  
   async removePresent(req, res, next) {
     try {
       const session = req.session;
@@ -73,22 +73,19 @@ try {
         return res.status(404).send({ message: "Session was not found" });
       }
       const { presentId } = req.params;
-      req.child = { id: '5fbe5d5d25fad0371495570f'}; //Заглушка, очікування обьекта req.child з id
-      req.body.childId = req.child.id;
-      let { childId } = req.body;
-      if (ObjectId.isValid(presentId)) {
-        console.log(presentId)
-        const result = await PresentsModel.findByIdAndDelete(presentId);
-        if (!result) return res.status(404).send({ message: 'Not found' });
-        const newPresent = await PresentsModel.find();
-        const presentId = newPresent.map(e=>(e._id));
-        await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: presentId}},{ upsert:true, returnNewDocument : true });
-        return res.status(201).send("Present deleted"); 
-      }
+      const { childId } = req.body;
+      const Present = await PresentsModel.find({childId: childId});
+      if (!Present) return res.status(404).send({ message: 'Not found child' });
+      const result = await PresentsModel.findByIdAndDelete(presentId);
+      if (!result) return res.status(404).send({ message: 'Not found' });
+      const newPresent = await PresentsModel.find({childId: childId});
+      await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: newPresent}},{ upsert:true, returnNewDocument : true });
+      return res.status(201).send("Present deleted"); 
     } catch (err) {
       next(err);
     }
   }
+
   async updatePresent(req, res, next) {
     try {
       !req.session && res.status(404).send({ message: "Session was not found" });
@@ -117,25 +114,16 @@ try {
         return res.status(404).send({ message: "Session was not found" });
       }
       const { presentId } = req.params;
-      req.child = { id: '5fbe5d5d25fad0371495570f'}; //Заглушка, очікування обьекта req.child з id
-      req.body.childId = req.child.id;
-      let { childId } = req.body;
-
-      if (ObjectId.isValid(presentId)) {
-        const Present = await PresentsModel.findById(presentId);
-        const Child = await ChildrenModel.findById(childId);
-        const rewardChild = Child.stars;
-        const rewardPresent = Present.reward;
-        if(rewardChild >= rewardPresent){
-          const newRewardPresent = rewardChild - rewardPresent;
-          await ChildrenModel.findByIdAndUpdate(childId, {$set: {stars: newRewardPresent}},{ upsert:true, returnNewDocument : true });
-          return res.status(200).send('Present buy'); 
-          // const result = await PresentsModel.findByIdAndDelete(presentId);
-          // if (!result) return res.status(404).send({ message: 'Not found' });
-        } else {res.status(404).send({ message: "You don't have that much stars" })}
-        // const newPresent = await PresentsModel.find();
-        // const newPresentId = newPresent.map(e=>(e._id));
-      }
+      const { childId } = req.body;
+      const Present = await PresentsModel.findById(presentId);
+      const Child = await ChildrenModel.findById(childId);
+      const rewardChild = Child.stars;
+      const rewardPresent = Present.reward;
+      if(rewardChild >= rewardPresent){
+        const newRewardPresent = rewardChild - rewardPresent;
+        await ChildrenModel.findByIdAndUpdate(childId, {$set: {stars: newRewardPresent}},{ upsert:true, returnNewDocument : true });
+        return res.status(200).send('Present buy'); 
+      } else {res.status(404).send({ message: "You don't have that much stars" })}
     } catch (err) {
       next(err);
     }
