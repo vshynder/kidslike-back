@@ -311,8 +311,8 @@
                     "Привычки"
                 ],
                 "operationId": "Get",
-                "summary": "",
-                "description": "",
+                "summary": "Получить привычки",
+                "description": "Получение привычек всех детей пользователя",
                 "consumes": [
                     "application/json"
                 ],
@@ -354,7 +354,7 @@
                     "Привычки"
                 ],
                 "operationId": "Patch",
-                "summary": "",
+                "summary": "Редактировать привычку",
                 "description": "",
                 "consumes": [
                     "application/json"
@@ -399,8 +399,8 @@
                     "Привычки"
                 ],
                 "operationId": "Patch",
-                "summary": "",
-                "description": "",
+                "summary": "Подтвердить привычку",
+                "description": "Подтверждение или невыполнение привычки на сегодня",
                 "consumes": [
                     "application/json"
                 ],
