@@ -1,9 +1,7 @@
 const {PresentsModel} = require('./presents.model');
 const {ChildrenModel} = require('../children/children.model');
-const { Types, SchemaType } = require('mongoose');
 const { ObjectId } = require('mongoose').Types;
 const Joi = require('joi');
-
 
 
 class PresentsController {
@@ -18,29 +16,26 @@ try {
     const {userId} = req.params  // принимает в строке запроса _id User
     console.log("userId =", userId);
 
-    const allChildrenByUser = await ChildrenModel.findOne({
-      idUser:Types.ObjectId(userId)
+    const allChildrenByUser = await ChildrenModel.find({
+      idUser:userId
     })
-
+    
     if(!allChildrenByUser){
       return res.status(401).send({message:'Not found User ID'})
-    }
-  
+    };
+    // собираем все idPresent со всех детей в массив
     const allPresents = allChildrenByUser.reduce((acc,present)=>{
-      
       present.presents.length > 0 ? acc.push(...present.presents): false;
-      console.log(acc);
       return acc
         },[]);
-        
-    //to do find all pseresents id to array 
-    return res.status(201).send(allPresents)
+    //находим всех pressent по id  
+    const x = await PresentsModel.find({ _id: { $in: allPresents } })
+  
+    return res.status(201).send(x)
 } catch (error) {
   console.log(error);
 } 
 }
-
-
   async addPresent(req, res, next) {
     try {
       const session = req.session;
@@ -48,8 +43,7 @@ try {
         return res.status(404).send({ message: "Session was not found" });
       }
       const { childId,title, reward } = req.body;
-      const findsId = (id) => {return ChildrenModel.find({_id:id})};
-      if(!findsId(childId))return res.status(404).send({ message: 'Not found' });
+    
       const splitpatch = req.files ? req.files.map(e => (e.path)) : ""
       const imagePath = splitpatch ? `http://localhost:1717/`+`${splitpatch}`.split('\\').slice(3).join('/') : "";
       const newPresent = await PresentsModel.create({
@@ -58,17 +52,20 @@ try {
         reward,
         image: imagePath,
         dateCreated: Date.now(),
-      })
-      await ChildrenModel.findByIdAndUpdate(childId,{ upsert:true, returnNewDocument : true } ,(err,child)=>{
-        child.presents.push(newPresent)
-        child.save();
       });
+      await ChildrenModel.findById(childId,(err,child)=>{
+        if(err)  {
+          return res.status(404).send({message:'Not Found Child'})
+        }
+      child.presents.push(newPresent._id)
+      child.save();
       res.status(200).send('Present added');
+      })
     } catch (err) {
       next(err);
     }
   }
-
+// надо переписать 
   async removePresent(req, res, next) {
     try {
       const session = req.session;
@@ -106,19 +103,49 @@ try {
         dateCreated: Date.now(),
       });
       !updatePresent && res.status(404).send({ message: "Not found Id" });
-      console.log(updatePresent);
-      await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: updatePresent}},{ upsert:true, returnNewDocument : true });
-      res.status(201).send({message:'Present update'})
-
+        res.status(200).send({message:'Present was Update'})
     }catch(error){
       console.log(error)
       next(error)
     };
   };
 
+  async buyPresent(req, res, next) {
+    try {
+      const session = req.session;
+      if (!session) {
+        return res.status(404).send({ message: "Session was not found" });
+      }
+      const { presentId } = req.params;
+      req.child = { id: '5fbe5d5d25fad0371495570f'}; //Заглушка, очікування обьекта req.child з id
+      req.body.childId = req.child.id;
+      let { childId } = req.body;
+
+      if (ObjectId.isValid(presentId)) {
+        const Present = await PresentsModel.findById(presentId);
+        const Child = await ChildrenModel.findById(childId);
+        const rewardChild = Child.stars;
+        const rewardPresent = Present.reward;
+        if(rewardChild >= rewardPresent){
+          const newRewardPresent = rewardChild - rewardPresent;
+          await ChildrenModel.findByIdAndUpdate(childId, {$set: {stars: newRewardPresent}},{ upsert:true, returnNewDocument : true });
+          return res.status(200).send('Present buy'); 
+          // const result = await PresentsModel.findByIdAndDelete(presentId);
+          // if (!result) return res.status(404).send({ message: 'Not found' });
+        } else {res.status(404).send({ message: "You don't have that much stars" })}
+        // const newPresent = await PresentsModel.find();
+        // const newPresentId = newPresent.map(e=>(e._id));
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+
+
 
   validPresent = (req, res, next) => {
     const validator = Joi.object({
+      _id:Joi.string(),
       title: Joi.string(),
       childId: Joi.string().required(),
       reward: Joi.number(),
