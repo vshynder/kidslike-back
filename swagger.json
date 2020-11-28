@@ -114,25 +114,21 @@
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Операция прошла успешно",
-                        "content": "application/json"
-                    },
-                    "400": {
-                        "description": "Нет заголовка с токеном авторизации",
+                        "description": "Success",
                         "content": "application/json"
                     },
                     "401": {
-                        "description": "Токен авторизации невалидный",
+                        "description": "Unauthorized",
                         "content": "application/json"
                     },
                     "404": {
-                        "description": "Пользователь/сессия не найдены",
+                        "description": "Not found",
                         "content": "application/json"
                     }
                 }
@@ -183,6 +179,41 @@
                 }
             }
         },
+        "api/token/token_refresh": {
+            "post": {
+                "tags": [
+                    "Авторизация"
+                ],
+                "operationId": "Post",
+                "summary": "Получить новую пару токенов",
+                "description": "После отправления на сервер refresh_token получает новую пару токенов access и refresh",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "refreshToken",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/components/schemas/refresh"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": "application/json"
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": "application/json"
+                    }
+                }
+            }
+        },
         "/api/children/addchild": {
             "post": {
                 "tags": [
@@ -208,7 +239,7 @@
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -224,7 +255,7 @@
                         "description": "Ошибка добавления ребенка"
                     },
                     "401": {
-                        "description": "Нет заголовка с токеном авторизации"
+                        "description": "Unauthorized"
                     }
                 }
             }
@@ -254,7 +285,7 @@
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -280,8 +311,8 @@
                     "Привычки"
                 ],
                 "operationId": "Get",
-                "summary": "",
-                "description": "",
+                "summary": "Получить привычки",
+                "description": "Получение привычек всех детей пользователя",
                 "consumes": [
                     "application/json"
                 ],
@@ -297,7 +328,7 @@
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -323,7 +354,7 @@
                     "Привычки"
                 ],
                 "operationId": "Patch",
-                "summary": "",
+                "summary": "Редактировать привычку",
                 "description": "",
                 "consumes": [
                     "application/json"
@@ -342,7 +373,7 @@
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -368,8 +399,8 @@
                     "Привычки"
                 ],
                 "operationId": "Patch",
-                "summary": "",
-                "description": "",
+                "summary": "Подтвердить привычку",
+                "description": "Подтверждение или невыполнение привычки на сегодня",
                 "consumes": [
                     "application/json"
                 ],
@@ -387,7 +418,7 @@
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -407,7 +438,7 @@
                 }
             }
         },
-        "/api/habbits/delhabbit": {
+        "/api/habbits/delhabbit/:idHabbit": {
             "delete": {
                 "tags": [
                     "Привычки"
@@ -420,22 +451,16 @@
                 ],
                 "parameters": [
                     {
-                        "name": "Request body",
-                        "in": "body",
+                        "name": "Req.params",
+                        "in": "path",
                         "required": true,
-                        "description": "Habbit's Id",
-                        "schema": {
-                            "type": "object",
-                            "example": {
-                                "idHabbit": "string"
-                            }
-                        }
+                        "description": "Habbit's Id"
                     },
                     {
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -504,7 +529,7 @@
                     {
                         "name": "Authorization",
                         "in": "header",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -517,13 +542,13 @@
                         }
                     },
                     "400": {
-                        "description": "Ошибка создания задачи "
+                        "description": "Bad request"
                     },
                     "401": {
-                        "description": "Нет заголовка с токеном авторизации"
+                        "description": "Unauthorized"
                     },
                     "404": {
-                        "description": "Ребенок не найден"
+                        "description": "Not found"
                     }
                 }
             }
@@ -558,7 +583,7 @@
                     {
                         "name": "Authorization",
                         "in": "header",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -570,7 +595,7 @@
                         "description": "Ошибка изменения задачи "
                     },
                     "401": {
-                        "description": "Нет заголовка с токеном авторизации"
+                        "description": "Unauthorized"
                     }
                 }
             },
@@ -589,7 +614,7 @@
                     {
                         "name": "Authorization",
                         "in": "header",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -639,7 +664,7 @@
                     {
                         "name": "Authorization",
                         "in": "header",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -686,7 +711,7 @@
                     {
                         "name": "Authorization",
                         "in": "header",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -733,7 +758,7 @@
                     {
                         "name": "Authorization",
                         "in": "header",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -772,7 +797,7 @@
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -802,7 +827,7 @@
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -833,7 +858,7 @@
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -870,7 +895,7 @@
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
-                        "description": "Токен",
+                        "description": "accessToken",
                         "required": true
                     }
                 ],
@@ -990,6 +1015,10 @@
                         "type": "string",
                         "decription": "User's name"
                     },
+                    "email": {
+                        "type": "string",
+                        "description": "User's email"
+                    },
                     "avatarURL": {
                         "type": "string",
                         "description": "User's profile avatar url"
@@ -1001,24 +1030,17 @@
                     "refreshToken": {
                         "type": "string",
                         "description": "User's refresh token"
+                    }
+                }
+            },
+            "refresh": {
+                "type": "object",
+                "properties": {
+                    "access_token": {
+                        "type": "string"
                     },
-                    "childrens": {
-                        "type": "array",
-                        "description": "User's children",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string"
-                                },
-                                "name": {
-                                    "type": "string"
-                                },
-                                "gender": {
-                                    "type": "string"
-                                }
-                            }
-                        }
+                    "refresh_token": {
+                        "type": "string"
                     }
                 }
             },
