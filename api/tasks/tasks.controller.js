@@ -1,11 +1,10 @@
 const TaskModel = require('./tasks.model');
-const ChildrenModel = require('../children/children.model');
+const { ChildrenModel } = require('../children/children.model');
 const Joi = require('joi');
 
 class TaskController {
   async getTasks(req, res, next) {
     try {
-      const userId = '5fb58ca77df3612673e62e11';
       const tasks = await TaskModel.find();
       return res.status(200).send(tasks);
     } catch (error) {
@@ -15,11 +14,8 @@ class TaskController {
 
   async addTask(req, res, next) {
     try {
-      const childId = req.params.childId;
-
       const millisecondsInADay = 86400000;
-      const { title, reward, daysToDo } = req.body;
-
+      const { title, reward, daysToDo, childId } = req.body;
       const finishDay = daysToDo
         ? Date.now() + millisecondsInADay * daysToDo
         : null;
@@ -32,6 +28,12 @@ class TaskController {
         finishDay,
         childId,
       });
+
+      await ChildrenModel.findById(childId, async (err, children) => {
+        await children.tasks.push(task.id);
+        await children.save();
+      });
+
       return res.status(201).send(task);
     } catch (error) {
       next(error);
@@ -106,12 +108,23 @@ class TaskController {
   }
   async removeTask(req, res, next) {
     try {
-      const contact = await TaskModel.findByIdAndDelete(req.params.taskId);
-
-      if (!contact) {
+      const { taskId } = req.params;
+      const task = await TaskModel.findById(taskId);
+      if (!task) {
         return res.status(404).send({ message: 'Not found' });
       }
-      return res.status(200).send({ message: 'Task deleted' });
+      await ChildrenModel.findById(task.childId, async (err, child) => {
+        console.log('TASKID', taskId);
+        console.log('CHILD', child);
+        console.log('CHILD TASKS', child.tasks);
+        child.tasks.filter((task) => {
+          task.id !== taskId;
+        });
+        child.save();
+      });
+
+      // return res.status(200).send({ message: 'Task deleted' });
+      return res.status(200).send('ok');
     } catch (error) {
       next(error);
     }
@@ -122,6 +135,7 @@ class TaskController {
       title: Joi.string().required(),
       reward: Joi.number().required(),
       daysToDo: Joi.number(),
+      childId: Joi.string().required(),
     });
 
     TaskController.checkValidationError(addSchemaValidator, req, res, next);
@@ -129,9 +143,10 @@ class TaskController {
 
   updateTaskValidation(req, res, next) {
     const updateSchemaRules = Joi.object({
-      title: Joi.string().required(),
-      reward: Joi.number().required(),
+      title: Joi.string(),
+      reward: Joi.number(),
       daysToDo: Joi.number(),
+      childId: Joi.string(),
     });
 
     TaskController.checkValidationError(updateSchemaRules, req, res, next);
