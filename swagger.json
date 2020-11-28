@@ -1,34 +1,44 @@
 {
     "swagger": "2.0",
     "info": {
-        "version": "1.0.0",
+        "version": "1.0.1",
         "title": "Kidslike v2 API",
-        "description": "This is a server for a Kidslike app.",
+        "description": "This is a server for a Kidslike app. Github repository: https://github.com/vshynder/kidslike-back",
         "license": {
             "name": "MIT",
             "url": "https://opensource.org/licenses/MIT"
-        },
-        "tags": [
-            {
-                "name": "Авторизация"
-            },
-            {
-                "name": "Пользователь"
-            },
-            {
-                "name": "Ребенок"
-            },
-            {
-                "name": "Задачи"
-            },
-            {
-                "name": "Привычки"
-            },
-            {
-                "name": "Подарки"
-            }
-        ]
+        }
     },
+    "host": "kidslike-back-end.herokuapp.com/",
+    "schemes": [
+        "https"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "Авторизация"
+        },
+        {
+            "name": "Пользователь"
+        },
+        {
+            "name": "Ребенок"
+        },
+        {
+            "name": "Задачи"
+        },
+        {
+            "name": "Привычки"
+        },
+        {
+            "name": "Подарки"
+        }
+    ],
     "paths": {
         "/api/auth/register": {
             "post": {
