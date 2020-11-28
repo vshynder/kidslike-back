@@ -483,22 +483,21 @@
                     "Задача"
                 ],
                 "operationId": "Get",
-                "consumes": [],
-                "produces": [
-                    "text/plain",
-                    "application/json",
-                    "text/json"
+                "summary": "Получить все задачи",
+                "description": "Получение всех задач всех детей пользователя",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "accessToken",
+                        "required": true
+                    }
                 ],
-                "parameters": [],
                 "responses": {
                     "200": {
                         "description": "Success",
                         "schema": {
-                            "uniqueItems": false,
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
+                            "$ref": "#/components/schemas/tasks"
                         }
                     }
                 }
@@ -1204,7 +1203,45 @@
                     }
                 }
             },
-            "task": {},
+            "tasks": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "isCompleted": {
+                            "type": "string",
+                            "enum": [
+                                "active",
+                                "done",
+                                "undone"
+                            ]
+                        },
+                        "_id": {
+                            "type": "string"
+                        },
+                        "title": {
+                            "type": "string"
+                        },
+                        "reward": {
+                            "type": "number"
+                        },
+                        "daysToDo": {
+                            "type": "number"
+                        },
+                        "startDay": {
+                            "type": "string",
+                            "decription": "The day when task started"
+                        },
+                        "finishDay": {
+                            "type": "string",
+                            "decription": "The day when task finished"
+                        },
+                        "childId": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "addTask": {
                 "type": "object",
                 "required": [
