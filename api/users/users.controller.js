@@ -4,7 +4,7 @@ const { v4: uuid } = require('uuid');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const { ObjectId } = require('mongodb');
-const UserModel = require('../users/users.model');
+const UserModel = require('./users.model');
 const defaultAvatar =
   'https://code-is-poetry.ru/wp-content/plugins/all-in-one-seo-pack-pro/images/default-user-image.png';
 
