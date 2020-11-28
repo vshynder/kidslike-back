@@ -66,11 +66,20 @@ class TaskController {
   }
   async repeatTask(req, res, next) {
     try {
+      const millisecondsInADay = 86400000;
       const { taskId } = req.params;
-      const confirmedTask = await TaskModel.findByIdAndUpdate(taskId, {
+      const task = await TaskModel.findById(taskId);
+
+      const finishDay = task.daysToDo
+        ? Date.now() + millisecondsInADay * task.daysToDo
+        : null;
+
+      const repeatTask = await TaskModel.findByIdAndUpdate(taskId, {
         isCompleted: 'active',
+        startDay: Date.now(),
+        finishDay,
       });
-      return confirmedTask
+      return repeatTask
         ? res.status(200).send({ message: 'Task active' })
         : res.status(404).send({ message: 'Not found' });
     } catch (error) {

@@ -5,12 +5,12 @@ const {
   Types: { ObjectId },
 } = require('mongoose');
 
-const { ChildrenModel, ChildrenSchema } = require('../children/children.model');
+const { ChildrenModel } = require('../children/children.model');
+// const { send } = require('@sendgrid/mail');
 
 class Controllers {
   addHabbit = async (req, res, next) => {
     let { idChild } = req.body;
-    idChild = '5fb7ac03930dc826c4b85a32'; // Заглушка, Id ребенка
     try {
       await ChildrenModel.findById(idChild, async (err, child) => {
         req.body.ownerHabbits = child.name;
@@ -26,15 +26,14 @@ class Controllers {
         return res.status(201).send(createdHabbit);
       });
     } catch (err) {
-      console.log(err);
       next(err);
     }
   };
 
   getAllHabbitsChildrenByUser = async (req, res, next) => {
     try {
-      req.user = { id: '5fb313842e5c6c182c9b214f' }; //Заглушка, ожидает обьект req.user с полем id Родителя ???
-      req.body.idUser = req.user.id;
+      // req.user = { _id: '5fb313842e5c6c182c9b214f' }; //Заглушка, ожидает обьект req.user с полем id Родителя ???
+      req.body.idUser = req.user._id;
 
       const allChildrenByUser = await ChildrenModel.find({
         idUser: req.body.idUser,
@@ -59,7 +58,7 @@ class Controllers {
         idHabbit,
         idNewChildOwnerHabbit,
       } = req.body; // Ожидается в req.body необязательные свойства nameHabbit, priceHabbit, idNewChildOwnerHabbit для обновления
-      // idHabbit = '5fbac414128a4130c8bc9eae'; // Заглушка, Id Habbit, Ожидается в req.body.idHabbit.
+      //idHabbit, Ожидается в req.body.idHabbit обязательный параметр.
 
       let child = await ChildrenModel.findOne({
         'habbits._id': idHabbit,
@@ -80,6 +79,8 @@ class Controllers {
       } else {
         req.body.priceHabbit = getHabbit.priceHabbit;
       }
+
+      let responseHabbit = getHabbit;
 
       if (idNewChildOwnerHabbit) {
         let childForDelHabbit = await ChildrenModel.findOne({
@@ -102,16 +103,17 @@ class Controllers {
 
           childForAddHabbit.habbits.push(req.body);
 
-          await childForAddHabbit.save();
+          let allHabbits = await childForAddHabbit.save();
+
+          responseHabbit = allHabbits.habbits[allHabbits.habbits.length - 1];
         } catch (err) {
-          console.log(err);
           next(err);
         }
       }
 
       child.save();
 
-      return res.status(202).send(getHabbit);
+      return res.status(202).send(responseHabbit);
     } catch (err) {
       next(err);
     }
@@ -119,20 +121,18 @@ class Controllers {
 
   deleteHabbit = async (req, res, next) => {
     try {
-      let { idHabbit } = req.body;
-      idHabbit = '5fb6a804f81dbf1d40e8d3d9'; // Заглушка, Id Habbit, Ожидается в req.body.idHabbit.
+      let idHabbit = req.params.idHabbit;
 
-      await ChildrenModel.findOne(
-        {
-          'habbits._id': idHabbit,
-        },
-        async (err, child) => {
-          child.habbits = child.habbits.filter(
-            (habbit) => habbit.id !== idHabbit,
-          );
-          child.save();
-        },
-      );
+      let child = await ChildrenModel.findOne({
+        'habbits._id': idHabbit,
+      });
+
+      if (!child) {
+        return res.status(400).send('No Habbit');
+      }
+
+      child.habbits = child.habbits.filter((habbit) => habbit.id !== idHabbit);
+      child.save();
 
       return res.status(200).send('deleted');
     } catch (err) {
@@ -144,7 +144,6 @@ class Controllers {
     try {
       let result = { complited: false, bonus: null };
       let { confirmed, idHabbit } = req.body;
-      // idHabbit = '5fb52a395c98fb34189af5b9'; // Заглушка, Id Habbit, Ожидается в req.body.idHabbit.
 
       await ChildrenModel.findOne(
         {
@@ -207,6 +206,49 @@ class Controllers {
 
   validIdChild = (req, res, next) =>
     !ObjectId.isValid(req.body.idChild)
+      ? res.status(400).send('Invalid id!')
+      : next();
+
+  validAddHabit = (req, res, next) => {
+    const validator = Joi.object({
+      nameHabbit: Joi.string().empty().max(50).required(),
+      priceHabbit: Joi.number().empty().required(),
+      idChild: Joi.string().required(),
+    });
+    const { error } = validator.validate(req.body);
+    return error
+      ? res.status(400).send({ message: error.details[0].message })
+      : next();
+  };
+
+  validUpdateHabbit = (req, res, next) => {
+    const validator = Joi.object({
+      nameHabbit: Joi.string().max(50),
+      priceHabbit: Joi.number(),
+      idHabbit: Joi.string().required(),
+      idNewChildOwnerHabbit: Joi.string(),
+    });
+
+    const { error } = validator.validate(req.body);
+    return error
+      ? res.status(400).send({ message: error.details[0].message })
+      : next();
+  };
+
+  validCheckHabbit = (req, res, next) => {
+    const validator = Joi.object({
+      confirmed: Joi.boolean().required(),
+      idHabbit: Joi.string().required(),
+    });
+
+    const { error } = validator.validate(req.body);
+    return error
+      ? res.status(400).send({ message: error.details[0].message })
+      : next();
+  };
+
+  validDeleteHabbit = (req, res, next) =>
+    !ObjectId.isValid(req.params.idHabbit)
       ? res.status(400).send('Invalid id!')
       : next();
 }
