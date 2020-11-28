@@ -5,6 +5,13 @@ const Joi = require('joi');
 class TaskController {
   async getTasks(req, res, next) {
     try {
+      // 5fc2792427b6ed91714fdb11  Alex
+      // 5fc27ec8b67d3d92b8a4438d Martin
+      const userId = req.user.id;
+
+      const children = await ChildrenModel.find({ idUser: userId });
+
+      console.log('childrenOfUser', children);
       const tasks = await TaskModel.find();
       return res.status(200).send(tasks);
     } catch (error) {
