@@ -63,13 +63,14 @@ class LoginController {
       } else {
         res.status(400).send({ message: 'missing token' });
       }
-      console.log(process.env.TOKEN_SECRET);
+  
       let verify;
       try {
         verify = await jwt.verify(token, process.env.TOKEN_SECRET);
       } catch (err) {
         res.status(401).send({ message: 'Unauthorized' });
       }
+ 
       try {
         const session = await SessionModel.findOne({ sid: verify.uid });
         if (!session) {
