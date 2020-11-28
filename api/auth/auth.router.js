@@ -3,7 +3,7 @@ const router = Router();
 
 const LoginController = require('./login.controller');
 const { googleOAuth, facebookOAuth, initUser } = require('./auth.controller');
-const SignUpController = require('./users.controller');
+const SignUpController = require('../users/users.controller');
 
 //google and facebook auth
 router.get('/google', googleOAuth.formQueryString.bind(googleOAuth));
