@@ -15,25 +15,31 @@ class TokenController {
         : authHeader.split(' ')[1];
 
       //
-      const sessionId = await jwt.verify(token, process.env.TOKEN_SECRET)
-        .session._id;
+      const sessionId = await jwt.verify(token, process.env.TOKEN_SECRET).sid;
+       console.log(sessionId);
       if (!sessionId) {
         res.status('Unauthorized', 401).send('not found session');
       }
       const session = await sessionModel.findById(sessionId);
       if (!session) {
         res.status(400).send({ message: 'not found session' });
-      }
+      };
 
       const user = await userModel.findById(session.sid);
       if (!user) {
         return res.status(400).send({ message: 'Not Found User' });
       }
+      //delete session 
+      await sessionModel.findByIdAndDelete(session._id);
+      // new session
+      const newSession = await sessionModel.create({
+        sid: user.id || user._id,
+      });
 
-      const access_token = await jwt.sign(
+      const accessToken = await jwt.sign(
         {
           uid: user.id || user._id,
-          sid:session._id,
+          sid:newSession._id,
         },
         process.env.TOKEN_SECRET,
         {
@@ -41,10 +47,10 @@ class TokenController {
         },
       );
 
-      const refresh_token = await jwt.sign(
+      const refreshToken = await jwt.sign(
         {
           uid: user.id || user._id,
-          sid:session._id,
+          sid:newSession._id,
         },
         process.env.TOKEN_SECRET,
         {
@@ -53,8 +59,8 @@ class TokenController {
       );
 
       return res.status(200).json({
-        access_token,
-        refresh_token,
+        accessToken,
+        refreshToken,
       });
     } catch (error) {
       console.log(error);
