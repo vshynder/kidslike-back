@@ -46,7 +46,7 @@ class GoogleOAuthController {
     const params = queryString.stringify({
       client_id:
         '85907041916-n8741e6h0gnv1ehv8f67anjrjk69qij6.apps.googleusercontent.com', //  Заглушка , тут будет id нашего серваси
-      redirect_uri: `http://localhost:1717/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
+      redirect_uri: `https://kidslike-back-end.herokuapp.com/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
       scope: [
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile',
@@ -66,7 +66,7 @@ class GoogleOAuthController {
         client_id:
           '85907041916-n8741e6h0gnv1ehv8f67anjrjk69qij6.apps.googleusercontent.com', //  Заглушка
         client_secret: 'I9CSPs3RUwOKVAG2OhAYEuYd', //  Заглушка
-        redirect_uri: `http://localhost:1717/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
+        redirect_uri: `https://kidslike-back-end.herokuapp.com/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
         grant_type: 'authorization_code',
         code,
       })
@@ -120,7 +120,7 @@ class FacebookOAuthController {
   facebookLoginUrl() {
     const params = queryString.stringify({
       client_id: '367339414333042',
-      redirect_uri: `http://localhost:1717/api/auth/facebook/callback`, //  //  Заглушка url нашего сервиса на heruku /api/auth/facebook/callback
+      redirect_uri: `https://kidslike-back-end.herokuapp.com/api/auth/facebook/callback`, //  //  Заглушка url нашего сервиса на heruku /api/auth/facebook/callback
       scope: ['email', 'user_friends'].join(','),
       response_type: 'code',
       auth_type: 'rerequest',
@@ -135,7 +135,7 @@ class FacebookOAuthController {
       .post('https://graph.facebook.com/v9.0/oauth/access_token', {
         client_id: '367339414333042', //  Заглушка
         client_secret: '8a2156973ff3b46676ae7a9a4b49f4e3', //  Заглушка
-        redirect_uri: `http://localhost:1717/api/auth/facebook/callback`, //  Заглушка
+        redirect_uri: `https://kidslike-back-end.herokuapp.com/api/auth/facebook/callback`, //  Заглушка
         code: code,
       })
       .then((data) => {
