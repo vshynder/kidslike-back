@@ -5,14 +5,21 @@ const Joi = require('joi');
 class TaskController {
   async getTasks(req, res, next) {
     try {
-      // 5fc2792427b6ed91714fdb11  Alex
-      // 5fc27ec8b67d3d92b8a4438d Martin
       const userId = req.user.id;
-
       const children = await ChildrenModel.find({ idUser: userId });
+      if (!children) {
+        return res
+          .status(404)
+          .send({ message: 'Children of the user not found' });
+      }
 
-      console.log('childrenOfUser', children);
-      const tasks = await TaskModel.find();
+      const arrOfTasks = children.reduce((acc, child) => {
+        acc.push(...child.tasks);
+        return acc;
+      }, []);
+
+      const tasks = await TaskModel.find({ _id: { $in: arrOfTasks } });
+
       return res.status(200).send(tasks);
     } catch (error) {
       next(error);
