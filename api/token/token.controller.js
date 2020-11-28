@@ -24,6 +24,7 @@ class TokenController {
       if (!session) {
         res.status(400).send({ message: 'not found session' });
       }
+
       const user = await userModel.findById(session.sid);
       if (!user) {
         return res.status(400).send({ message: 'Not Found User' });
@@ -31,8 +32,8 @@ class TokenController {
 
       const access_token = await jwt.sign(
         {
-          id: user._id,
-          session,
+          uid: user.id || user._id,
+          sid:session._id,
         },
         process.env.TOKEN_SECRET,
         {
@@ -42,8 +43,8 @@ class TokenController {
 
       const refresh_token = await jwt.sign(
         {
-          id: user._id,
-          session,
+          uid: user.id || user._id,
+          sid:session._id,
         },
         process.env.TOKEN_SECRET,
         {
