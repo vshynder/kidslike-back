@@ -37,7 +37,7 @@
         }
     ],
     "paths": {
-        "/api/auth/register": {
+        "api/auth/register": {
             "post": {
                 "tags": [
                     "Авторизация"
@@ -72,7 +72,7 @@
                 }
             }
         },
-        "/api/auth/login": {
+        "api/auth/login": {
             "post": {
                 "tags": [
                     "Авторизация"
@@ -104,7 +104,7 @@
                 }
             }
         },
-        "/api/auth/logout": {
+        "api/auth/logout": {
             "delete": {
                 "tags": [
                     "Авторизация"
@@ -138,7 +138,7 @@
                 }
             }
         },
-        "/api/auth/google": {
+        "api/auth/google": {
             "get": {
                 "tags": [
                     "Авторизация"
@@ -160,7 +160,7 @@
                 }
             }
         },
-        "/api/auth/facebook": {
+        "api/auth/facebook": {
             "get": {
                 "tags": [
                     "Авторизация"
@@ -181,7 +181,7 @@
                 }
             }
         },
-        "/api/auth/current": {
+        "api/auth/current": {
             "get": {
                 "tags": [
                     "Авторизация"
@@ -245,7 +245,7 @@
                 }
             }
         },
-        "/api/children/addchild": {
+        "api/children/addchild": {
             "post": {
                 "tags": [
                     "Ребенок"
@@ -290,7 +290,7 @@
                 }
             }
         },
-        "/api/habbits": {
+        "api/habbits": {
             "post": {
                 "tags": [
                     "Привычки"
@@ -374,7 +374,7 @@
                 }
             }
         },
-        "/api/habbits/:idHabbit": {
+        "api/habbits/:idHabbit": {
             "delete": {
                 "tags": [
                     "Привычки"
@@ -412,7 +412,7 @@
                 }
             }
         },
-        "/api/habbits/updatehabbit": {
+        "api/habbits/updatehabbit": {
             "patch": {
                 "tags": [
                     "Привычки"
@@ -456,7 +456,7 @@
                 }
             }
         },
-        "/api/habbits/checkhabbit": {
+        "api/habbits/checkhabbit": {
             "patch": {
                 "tags": [
                     "Привычки"
@@ -500,7 +500,7 @@
                 }
             }
         },
-        "/api/tasks": {
+        "api/tasks": {
             "get": {
                 "tags": [
                     "Задачи"
@@ -531,7 +531,7 @@
                 }
             }
         },
-        "/api/tasks/:childId": {
+        "api/tasks/:childId": {
             "post": {
                 "tags": [
                     "Задачи"
@@ -579,7 +579,7 @@
                 }
             }
         },
-        "/api/tasks/:taskId": {
+        "api/tasks/:taskId": {
             "patch": {
                 "tags": [
                     "Задачи"
@@ -658,7 +658,7 @@
                 }
             }
         },
-        "/api/tasks/confirm/:taskId": {
+        "api/tasks/confirm/:taskId": {
             "patch": {
                 "tags": [
                     "Задачи"
@@ -704,7 +704,7 @@
                 }
             }
         },
-        "/api/tasks/notconfirm/:taskId": {
+        "api/tasks/notconfirm/:taskId": {
             "patch": {
                 "tags": [
                     "Задачи"
@@ -750,7 +750,7 @@
                 }
             }
         },
-        "/api/tasks/repeat/:taskId": {
+        "api/tasks/repeat/:taskId": {
             "patch": {
                 "tags": [
                     "Задачи"
@@ -796,7 +796,7 @@
                 }
             }
         },
-        "/api/presents/addPresent": {
+        "api/presents/addPresent": {
             "post": {
                 "tags": [
                     "Подарки"
@@ -828,7 +828,7 @@
                 }
             }
         },
-        "/api/presents/buyPresent": {
+        "api/presents/buyPresent": {
             "post": {
                 "tags": [
                     "Подарки"
@@ -857,7 +857,7 @@
                 }
             }
         },
-        "/api/presents/:presentId": {
+        "api/presents/:presentId": {
             "delete": {
                 "tags": [
                     "Подарки"
@@ -893,7 +893,7 @@
                 }
             }
         },
-        "/api/presents/:userId": {
+        "api/presents/:userId": {
             "get": {
                 "tags": [
                     "Подарки"
@@ -1058,13 +1058,6 @@
                     },
                     "avatarURL": {
                         "type": "string"
-                    },
-                    "childrens": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "default": "ObjectId"
-                        }
                     },
                     "email": {
                         "type": "string"
