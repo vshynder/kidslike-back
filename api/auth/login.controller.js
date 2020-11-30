@@ -100,7 +100,6 @@ class LoginController {
       res.send({
         name: user.username,
         avatarURL: user.avatarURL,
-        childrens: user.childrens,
         email: user.email,
       });
     } catch (err) {
