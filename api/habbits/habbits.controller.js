@@ -10,19 +10,20 @@ const { ChildrenModel } = require('../children/children.model');
 
 class Controllers {
   addHabbit = async (req, res, next) => {
+    let { idChild } = req.body;
     try {
-      const habbit = await HabbitsModel.create(req.body);
-      await ChildrenModel.findById(habbit.idChild, async (err, child) => {
+      await ChildrenModel.findById(idChild, async (err, child) => {
         req.body.ownerHabbits = child.name;
         req.body.genderChild = child.gender;
 
-        child.habbits
-          ? child.habbits.push(habbit._id)
-          : (child.habbits = Array.from(habbit._id));
+        child.habbits.push(req.body);
 
-        await child.save();
+        let childWithNewHabbit = await child.save();
 
-        return res.status(201).send(habbit);
+        let createdHabbit =
+          childWithNewHabbit.habbits[childWithNewHabbit.habbits.length - 1];
+
+        return res.status(201).send(createdHabbit);
       });
     } catch (err) {
       next(err);
@@ -39,16 +40,12 @@ class Controllers {
         idUser: req.body.idUser,
       });
 
-      const allHabbits = [];
-      let counter = 0;
+      const allHabbits = allChildrenByUser.reduce((acc, ell) => {
+        ell.habbits.length > 0 && acc.push(...ell.habbits);
+        return acc;
+      }, []);
 
-      allChildrenByUser.forEach(async (child) => {
-        const childHabbits = await HabbitsModel.find({ idChild: child._id });
-        allHabbits.push(...childHabbits);
-        counter++;
-        if (counter === allChildrenByUser.length)
-          return res.status(200).send(allHabbits);
-      });
+      return res.status(200).send(allHabbits);
     } catch (err) {
       next(err);
     }
