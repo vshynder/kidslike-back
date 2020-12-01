@@ -1,36 +1,43 @@
 {
     "swagger": "2.0",
     "info": {
-        "version": "1.0.0",
+        "version": "1.0.1",
         "title": "Kidslike v2 API",
-        "description": "This is a server for a Kidslike app.",
+        "description": "This is a server for a Kidslike app. Github repository: https://github.com/vshynder/kidslike-back",
         "license": {
             "name": "MIT",
             "url": "https://opensource.org/licenses/MIT"
-        },
-        "tags": [
-            {
-                "name": "Авторизация"
-            },
-            {
-                "name": "Пользователь"
-            },
-            {
-                "name": "Ребенок"
-            },
-            {
-                "name": "Задачи"
-            },
-            {
-                "name": "Привычки"
-            },
-            {
-                "name": "Подарки"
-            }
-        ]
+        }
     },
+    "host": "kidslike-back-end.herokuapp.com/",
+    "schemes": [
+        "https"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "Авторизация"
+        },
+        {
+            "name": "Ребенок"
+        },
+        {
+            "name": "Задачи"
+        },
+        {
+            "name": "Привычки"
+        },
+        {
+            "name": "Подарки"
+        }
+    ],
     "paths": {
-        "/api/auth/register": {
+        "api/auth/register": {
             "post": {
                 "tags": [
                     "Авторизация"
@@ -65,7 +72,7 @@
                 }
             }
         },
-        "/api/auth/login": {
+        "api/auth/login": {
             "post": {
                 "tags": [
                     "Авторизация"
@@ -131,7 +138,7 @@
                 }
             }
         },
-        "/api/auth/google": {
+        "api/auth/google": {
             "get": {
                 "tags": [
                     "Авторизация"
@@ -153,7 +160,7 @@
                 }
             }
         },
-        "/api/auth/facebook": {
+        "api/auth/facebook": {
             "get": {
                 "tags": [
                     "Авторизация"
@@ -174,7 +181,7 @@
                 }
             }
         },
-        "/api/auth/current": {
+        "api/auth/current": {
             "get": {
                 "tags": [
                     "Авторизация"
@@ -238,7 +245,7 @@
                 }
             }
         },
-        "/api/children/addchild": {
+        "api/children/addchild": {
             "post": {
                 "tags": [
                     "Ребенок"
@@ -283,7 +290,7 @@
                 }
             }
         },
-        "/api/habbits/addhabbit": {
+        "api/habbits": {
             "post": {
                 "tags": [
                     "Привычки"
@@ -325,9 +332,7 @@
                         "description": "Not found"
                     }
                 }
-            }
-        },
-        "/api/habbits/getallhabbitsuser": {
+            },
             "get": {
                 "tags": [
                     "Привычки"
@@ -369,7 +374,45 @@
                 }
             }
         },
-        "/api/habbits/updatehabbit": {
+        "api/habbits/:idHabbit": {
+            "delete": {
+                "tags": [
+                    "Привычки"
+                ],
+                "summary": "Удалить привычку",
+                "description": "Удаление привычки ребенка пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Req.params",
+                        "in": "path",
+                        "required": true,
+                        "description": "Habbit's Id"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "accessToken",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Habbit deleted successful."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "api/habbits/updatehabbit": {
             "patch": {
                 "tags": [
                     "Привычки"
@@ -413,7 +456,7 @@
                 }
             }
         },
-        "/api/habbits/checkhabbit": {
+        "api/habbits/checkhabbit": {
             "patch": {
                 "tags": [
                     "Привычки"
@@ -457,48 +500,10 @@
                 }
             }
         },
-        "/api/habbits/delhabbit/:idHabbit": {
-            "delete": {
-                "tags": [
-                    "Привычки"
-                ],
-                "summary": "Удалить привычку",
-                "description": "Удаление привычки ребенка пользователя",
-                "consumes": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "Req.params",
-                        "in": "path",
-                        "required": true,
-                        "description": "Habbit's Id"
-                    },
-                    {
-                        "name": "Authorization",
-                        "in": "header",
-                        "type": "string",
-                        "description": "accessToken",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Habbit deleted successful."
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Not found"
-                    }
-                }
-            }
-        },
-        "/api/tasks": {
+        "api/tasks": {
             "get": {
                 "tags": [
-                    "Задача"
+                    "Задачи"
                 ],
                 "summary": "Получить все задачи",
                 "description": "Получение всех задач всех детей пользователя",
@@ -529,7 +534,7 @@
         "api/tasks/:childId": {
             "post": {
                 "tags": [
-                    "Задача"
+                    "Задачи"
                 ],
                 "summary": "Добавить задачу",
                 "description": "Добавить задачу ребенку пользователя",
@@ -574,10 +579,10 @@
                 }
             }
         },
-        "/api/tasks/:taskId": {
+        "api/tasks/:taskId": {
             "patch": {
                 "tags": [
-                    "Задача"
+                    "Задачи"
                 ],
                 "summary": "Изменить задачу",
                 "description": "Изменить задачу ребенка пользователя",
@@ -621,7 +626,7 @@
             },
             "delete": {
                 "tags": [
-                    "Задача"
+                    "Задачи"
                 ],
                 "summary": "Удалить задачу",
                 "description": "Удалить задачу ребенка пользователя",
@@ -653,10 +658,10 @@
                 }
             }
         },
-        "/api/tasks/confirm/:taskId": {
+        "api/tasks/confirm/:taskId": {
             "patch": {
                 "tags": [
-                    "Задача"
+                    "Задачи"
                 ],
                 "summary": "Подтвердить задачу",
                 "description": "Подтверждение задачи ребенка пользователя",
@@ -699,10 +704,10 @@
                 }
             }
         },
-        "/api/tasks/notconfirm/:taskId": {
+        "api/tasks/notconfirm/:taskId": {
             "patch": {
                 "tags": [
-                    "Задача"
+                    "Задачи"
                 ],
                 "summary": "Невыполнение задачи",
                 "description": "Отметить невыполненной задачу ребенка пользователя",
@@ -745,10 +750,10 @@
                 }
             }
         },
-        "/api/tasks/repeat/:taskId": {
+        "api/tasks/repeat/:taskId": {
             "patch": {
                 "tags": [
-                    "Задача"
+                    "Задачи"
                 ],
                 "summary": "Повторить задачу",
                 "description": "Повторить задачу ребенка пользователя",
@@ -791,7 +796,7 @@
                 }
             }
         },
-        "/api/presents/addPresent": {
+        "api/presents/addPresent": {
             "post": {
                 "tags": [
                     "Подарки"
@@ -823,7 +828,7 @@
                 }
             }
         },
-        "/api/presents/buyPresent": {
+        "api/presents/buyPresent": {
             "post": {
                 "tags": [
                     "Подарки"
@@ -852,7 +857,7 @@
                 }
             }
         },
-        "/api/presents/:presentId": {
+        "api/presents/:presentId": {
             "delete": {
                 "tags": [
                     "Подарки"
@@ -888,7 +893,7 @@
                 }
             }
         },
-        "/api/presents/:userId": {
+        "api/presents/:userId": {
             "get": {
                 "tags": [
                     "Подарки"
@@ -1053,13 +1058,6 @@
                     },
                     "avatarURL": {
                         "type": "string"
-                    },
-                    "children": {
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "default": "ObjectId"
-                        }
                     },
                     "email": {
                         "type": "string"
