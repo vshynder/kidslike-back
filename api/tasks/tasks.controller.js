@@ -10,9 +10,6 @@ class TaskController {
         childId,
         isCompleted: 'done',
       });
-      if (allDoneTasks.length < 1) {
-        return res.status(404).send({ message: 'tasks not found' });
-      }
       return res.send(allDoneTasks);
     } catch (err) {
       next(err);
