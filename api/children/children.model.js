@@ -4,8 +4,6 @@ const {
   Types: { ObjectId },
 } = require('mongoose');
 
-const { HabbitsSchema } = require('../habbits/habbits.model');
-
 const ChildrenSchema = new Schema({
   idUser: { type: String, required: true },
   name: { type: String },
@@ -15,7 +13,7 @@ const ChildrenSchema = new Schema({
     enum: ['male', 'female'],
   },
   stars: { type: Number, default: 0 },
-  habbits: [HabbitsSchema],
+  habbits: { type: Array, required: true },
   tasks: [{ type: ObjectId, ref: 'Tasks' }],
   presents: [{ type: ObjectId, ref: 'Presents' }],
 });
