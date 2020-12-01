@@ -344,13 +344,6 @@
                 ],
                 "parameters": [
                     {
-                        "name": "Req.user.id",
-                        "in": "body",
-                        "type": "string",
-                        "description": "User's Id ",
-                        "required": true
-                    },
-                    {
                         "name": "Authorization",
                         "in": "header",
                         "type": "string",
@@ -522,6 +515,9 @@
                             "$ref": "#/components/schemas/tasks"
                         }
                     },
+                    "400": {
+                        "description": "Bad request"
+                    },
                     "401": {
                         "description": "Unauthorized"
                     },
@@ -532,17 +528,60 @@
             }
         },
         "api/tasks/:childId": {
+            "get": {
+                "tags": [
+                    "Задачи"
+                ],
+                "summary": "Получить выполненные задачи ",
+                "description": "Получить все выполненные задачи ребенка пользователя",
+                "parameters": [
+                    {
+                        "name": "Child Id",
+                        "in": "path",
+                        "description": "Id of the user's child",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "accessToken",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/tasks"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "Задачи"
                 ],
                 "summary": "Добавить задачу",
                 "description": "Добавить задачу ребенку пользователя",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [],
                 "parameters": [
+                    {
+                        "name": "Child Id",
+                        "in": "path",
+                        "description": "Id of the user's child",
+                        "type": "string",
+                        "required": true
+                    },
                     {
                         "name": "Task",
                         "description": "Объект данных задачи ребенка",
@@ -586,23 +625,21 @@
                 ],
                 "summary": "Изменить задачу",
                 "description": "Изменить задачу ребенка пользователя",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [],
                 "parameters": [
                     {
-                        "name": "task",
+                        "name": "Task Id",
+                        "in": "path",
+                        "description": "Id of the task",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "Task",
                         "description": "Объект данных задачи ребенка",
                         "in": "body",
-                        "required": false,
+                        "required": true,
                         "schema": {
-                            "type": "object",
-                            "example": {
-                                "title": "string",
-                                "reward": "number",
-                                "daysToDo": "number"
-                            }
+                            "$ref": "#/components/schemas/addTask"
                         }
                     },
                     {
@@ -621,6 +658,9 @@
                     },
                     "401": {
                         "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
                     }
                 }
             },
@@ -630,11 +670,14 @@
                 ],
                 "summary": "Удалить задачу",
                 "description": "Удалить задачу ребенка пользователя",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [],
                 "parameters": [
+                    {
+                        "name": "Task Id",
+                        "in": "path",
+                        "description": "Id of the task",
+                        "type": "string",
+                        "required": true
+                    },
                     {
                         "name": "Authorization",
                         "in": "header",
@@ -644,16 +687,16 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Задача удалена"
+                        "description": "Success"
                     },
                     "401": {
-                        "description": "Нет заголовка с токеном авторизации"
+                        "description": "Unauthorized"
                     },
                     "404": {
-                        "description": "Коллекция не найдена "
+                        "description": "Not found"
                     },
                     "500": {
-                        "description": "Ошибка сервера "
+                        "description": "Server error"
                     }
                 }
             }
@@ -665,24 +708,13 @@
                 ],
                 "summary": "Подтвердить задачу",
                 "description": "Подтверждение задачи ребенка пользователя",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [],
                 "parameters": [
                     {
-                        "name": "task",
-                        "description": "Объект данных задачи ребенка",
-                        "in": "body",
-                        "required": false,
-                        "schema": {
-                            "type": "object",
-                            "example": {
-                                "title": "string",
-                                "reward": "number",
-                                "daysToDo": "number"
-                            }
-                        }
+                        "name": "Task Id",
+                        "in": "path",
+                        "description": "Id of the task",
+                        "type": "string",
+                        "required": true
                     },
                     {
                         "name": "Authorization",
@@ -693,13 +725,16 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Задача изменена"
+                        "description": "Success"
                     },
                     "400": {
-                        "description": "Ошибка изменения задачи "
+                        "description": "Bad request"
                     },
                     "401": {
-                        "description": "Нет заголовка с токеном авторизации"
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
                     }
                 }
             }
@@ -711,24 +746,13 @@
                 ],
                 "summary": "Невыполнение задачи",
                 "description": "Отметить невыполненной задачу ребенка пользователя",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [],
                 "parameters": [
                     {
-                        "name": "task",
-                        "description": "Объект данных задачи ребенка",
-                        "in": "body",
-                        "required": false,
-                        "schema": {
-                            "type": "object",
-                            "example": {
-                                "title": "string",
-                                "reward": "number",
-                                "daysToDo": "number"
-                            }
-                        }
+                        "name": "Task Id",
+                        "in": "path",
+                        "description": "Id of the task",
+                        "type": "string",
+                        "required": true
                     },
                     {
                         "name": "Authorization",
@@ -739,13 +763,16 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Задача изменена"
+                        "description": "Success"
                     },
                     "400": {
-                        "description": "Ошибка изменения задачи "
+                        "description": "Bad request"
                     },
                     "401": {
-                        "description": "Нет заголовка с токеном авторизации"
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
                     }
                 }
             }
@@ -757,24 +784,13 @@
                 ],
                 "summary": "Повторить задачу",
                 "description": "Повторить задачу ребенка пользователя",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [],
                 "parameters": [
                     {
-                        "name": "task",
-                        "description": "Объект данных задачи ребенка",
-                        "in": "body",
-                        "required": false,
-                        "schema": {
-                            "type": "object",
-                            "example": {
-                                "title": "string",
-                                "reward": "number",
-                                "daysToDo": "number"
-                            }
-                        }
+                        "name": "Task Id",
+                        "in": "path",
+                        "description": "Id of the task",
+                        "type": "string",
+                        "required": true
                     },
                     {
                         "name": "Authorization",
@@ -785,13 +801,16 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Задача изменена"
+                        "description": "Success"
                     },
                     "400": {
-                        "description": "Ошибка изменения задачи "
+                        "description": "Bad request"
                     },
                     "401": {
-                        "description": "Нет заголовка с токеном авторизации"
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
                     }
                 }
             }
@@ -828,19 +847,22 @@
                 }
             }
         },
-        "api/presents/buyPresent": {
+        "api/presents/buyPresent/:presentId": {
             "post": {
                 "tags": [
                     "Подарки"
                 ],
-                "summary": "Покупка подарка (Еще не написана)",
+                "summary": "Покупка подарка",
                 "description": "",
                 "parameters": [
                     {
                         "name": "Request body",
                         "in": "body",
                         "required": true,
-                        "description": "Объект данных для покупки подарка"
+                        "description": "Объект данных для покупки подарка",
+                        "schema": {
+                            "$ref": "#/components/schemas/buyPresents"
+                        }
                     },
                     {
                         "name": "Authorization",
@@ -852,7 +874,19 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success"
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/components/schemas/buyPresentsResponse "
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
                     }
                 }
             }
@@ -1118,18 +1152,7 @@
                     "priceHabbit": {
                         "type": "string"
                     },
-                    "ownerHabbits": {
-                        "type": "number"
-                    },
                     "idChild": {
-                        "type": "string"
-                    },
-                    "sprintHabbit": {
-                        "type": "string",
-                        "required": true,
-                        "default": "1111111111"
-                    },
-                    "genderChild": {
                         "type": "string"
                     }
                 }
@@ -1370,7 +1393,14 @@
                         }
                     }
                 }
-            }
+            },
+            "buyPresents": {
+                "type": "object",
+                "properties": {}
+            },
+            "buyPresentsResponse": {},
+            "updateTask": {},
+            "updateTaskResponse": {}
         }
     }
 }

@@ -5,9 +5,9 @@ const Joi = require('joi');
 class TaskController {
   async getAllComplitedTasksCurrentChild(req, res, next) {
     try {
-      const childrenId = req.body.id;
+      const childId = req.params.childId;
       const allDoneTasks = await TaskModel.find({
-        childId: childrenId,
+        childId,
         isCompleted: 'done',
       });
       if (allDoneTasks.length < 1) {
