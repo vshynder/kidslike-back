@@ -40,6 +40,12 @@ router.patch(
   tasksController.notConfirmTask,
 );
 
+router.get(
+  '/getComplitedTasks',
+  loginController.authorize,
+  tasksController.getAllComplitedTasksCurrentChild,
+);
+
 router.get('/', loginController.authorize, tasksController.getTasks);
 
 module.exports = router;

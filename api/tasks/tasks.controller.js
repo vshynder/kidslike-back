@@ -3,6 +3,21 @@ const { ChildrenModel } = require('../children/children.model');
 const Joi = require('joi');
 
 class TaskController {
+  async getAllComplitedTasksCurrentChild(req, res, next) {
+    try {
+      const childrenId = req.body.id;
+      const allDoneTasks = await TaskModel.find({
+        childId: childrenId,
+        isCompleted: 'done',
+      });
+      if (allDoneTasks.length < 1) {
+        return res.status(404).send({ message: 'tasks not found' });
+      }
+      return res.send(allDoneTasks);
+    } catch (err) {
+      next(err);
+    }
+  }
   async getTasks(req, res, next) {
     try {
       const userId = req.user.id;
