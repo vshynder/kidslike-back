@@ -63,14 +63,14 @@ class LoginController {
       } else {
         res.status(400).send({ message: 'missing token' });
       }
-  
+
       let verify;
       try {
         verify = await jwt.verify(token, process.env.TOKEN_SECRET);
       } catch (err) {
         res.status(401).send({ message: 'Unauthorized' });
       }
- 
+
       try {
         const session = await SessionModel.findOne({ sid: verify.uid });
         if (!session) {
@@ -109,6 +109,7 @@ class LoginController {
 
   async logout(req, res, next) {
     try {
+      console.log(req);
       await SessionModel.findByIdAndDelete(req.session._id);
       return res.send({ message: 'success' });
     } catch (err) {
