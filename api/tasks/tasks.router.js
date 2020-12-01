@@ -41,7 +41,7 @@ router.patch(
 );
 
 router.get(
-  '/getComplitedTasks',
+  '/:childId',
   loginController.authorize,
   tasksController.getAllComplitedTasksCurrentChild,
 );
