@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "version": "1.0.1",
+        "version": "1.0.2",
         "title": "Kidslike v2 API",
         "description": "This is a server for a Kidslike app. Github repository: https://github.com/vshynder/kidslike-back",
         "license": {
@@ -815,7 +815,38 @@
                 }
             }
         },
-        "api/presents/addPresent": {
+        "api/presents/": {
+            "get": {
+                "tags": [
+                    "Подарки"
+                ],
+                "summary": "Получение подарков",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "accessToken",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": "application/json",
+                        "schema": {
+                            "$ref": "#/components/schemas/getPresents"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "Подарки"
@@ -842,41 +873,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success"
-                    }
-                }
-            }
-        },
-        "api/presents/buyPresent/:presentId": {
-            "post": {
-                "tags": [
-                    "Подарки"
-                ],
-                "summary": "Покупка подарка",
-                "description": "",
-                "parameters": [
-                    {
-                        "name": "Request body",
-                        "in": "body",
-                        "required": true,
-                        "description": "Объект данных для покупки подарка",
-                        "schema": {
-                            "$ref": "#/components/schemas/buyPresents"
-                        }
-                    },
-                    {
-                        "name": "Authorization",
-                        "in": "header",
-                        "type": "string",
-                        "description": "accessToken",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
                         "description": "Success",
                         "schema": {
-                            "$ref": "#/components/schemas/buyPresentsResponse "
+                            "$ref": "#/components/schemas/present"
                         }
                     },
                     "400": {
@@ -892,6 +891,56 @@
             }
         },
         "api/presents/:presentId": {
+            "patch": {
+                "tags": [
+                    "Подарки"
+                ],
+                "summary": "Обновление подарка",
+                "description": "Update child's present",
+                "parameters": [
+                    {
+                        "name": "Present's Id",
+                        "in": "path",
+                        "type": "string",
+                        "required": true,
+                        "description": "Present's Id"
+                    },
+                    {
+                        "name": "Present",
+                        "in": "body",
+                        "type": "object",
+                        "required": true,
+                        "description": "Data object to update present",
+                        "schema": {
+                            "$ref": "#/components/schemas/updatePresent"
+                        }
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "accessToken",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/components/schemas/present"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            },
             "delete": {
                 "tags": [
                     "Подарки"
@@ -927,20 +976,20 @@
                 }
             }
         },
-        "api/presents/:userId": {
-            "get": {
+        "api/presents/buy/:presentId": {
+            "patch": {
                 "tags": [
                     "Подарки"
                 ],
-                "summary": "Получение подарков",
+                "summary": "Покупка подарка",
                 "description": "",
                 "parameters": [
                     {
-                        "name": "User Id",
+                        "name": "Present Id",
                         "in": "path",
                         "type": "string",
                         "required": true,
-                        "description": "принимает в строке запроса _id User"
+                        "description": "Объект данных для покупки подарка"
                     },
                     {
                         "name": "Authorization",
@@ -952,11 +1001,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "",
-                        "content": "application/json",
-                        "schema": {
-                            "$ref": "#/components/schemas/getPresents"
-                        }
+                        "description": "Success. Present was bought."
+                    },
+                    "400": {
+                        "description": "Bad request"
                     },
                     "401": {
                         "description": "Unauthorized"
@@ -1351,12 +1399,35 @@
                     }
                 }
             },
+            "present": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "childId": {
+                        "type": "string"
+                    },
+                    "reward": {
+                        "type": "number"
+                    },
+                    "image": {
+                        "type": "string"
+                    },
+                    "dateCreated": {
+                        "type": "string"
+                    }
+                }
+            },
             "addPresent": {
                 "type": "object",
                 "required:": [
                     "title",
                     "childId",
-                    "bal"
+                    "reward"
                 ],
                 "properties": {
                     "title": {
@@ -1365,7 +1436,7 @@
                     "childId": {
                         "type": "string"
                     },
-                    "bal": {
+                    "reward": {
                         "type": "number"
                     }
                 }
@@ -1376,13 +1447,16 @@
                 "items": {
                     "type": "object",
                     "properties": {
+                        "_id": {
+                            "type": "string"
+                        },
                         "title": {
                             "type": "string"
                         },
                         "childId": {
                             "type": "string"
                         },
-                        "bal": {
+                        "reward": {
                             "type": "number"
                         },
                         "image": {
@@ -1399,8 +1473,18 @@
                 "properties": {}
             },
             "buyPresentsResponse": {},
-            "updateTask": {},
-            "updateTaskResponse": {}
+            "updatePresent": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "reward": {
+                        "type": "number"
+                    },
+                    "image": {}
+                }
+            }
         }
     }
 }

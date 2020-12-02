@@ -1,51 +1,50 @@
-const {PresentsModel} = require('./presents.model');
-const {ChildrenModel} = require('../children/children.model');
-const { ObjectId } = require('mongoose').Types;
+const { PresentsModel } = require('./presents.model');
+const { ChildrenModel } = require('../children/children.model');
 const Joi = require('joi');
 
-
 class PresentsController {
-
-async getAllPresentsChild(req,res){
-try {
-    const session = req.session;
+  async getAllPresentsChild(req, res) {
+    try {
+      const session = req.session;
       if (!session) {
-        return res.status(404).send({ message: "Session was not found" });
+        return res.status(404).send({ message: 'Session was not found' });
       }
 
-    const {userId} = req.params  // принимает в строке запроса _id User
-    console.log("userId =", userId);
+      const userId = req.user.id;
 
-    const allChildrenByUser = await ChildrenModel.find({
-      idUser:userId
-    })
-    
-    if(!allChildrenByUser){
-      return res.status(401).send({message:'Not found User ID'})
-    };
-    // собираем все idPresent со всех детей в массив
-    const allPresents = allChildrenByUser.reduce((acc,present)=>{
-      present.presents.length > 0 ? acc.push(...present.presents): false;
-      return acc
-        },[]);
-    //находим всех pressent по id  
-    const x = await PresentsModel.find({ _id: { $in: allPresents } })
-  
-    return res.status(201).send(x)
-} catch (error) {
-  console.log(error);
-} 
-}
+      const allChildrenByUser = await ChildrenModel.find({
+        idUser: userId,
+      });
+
+      if (!allChildrenByUser) {
+        return res.status(401).send({ message: 'Not found User ID' });
+      }
+      // собираем все idPresent со всех детей в массив
+      const allPresents = allChildrenByUser.reduce((acc, present) => {
+        present.presents.length > 0 ? acc.push(...present.presents) : false;
+        return acc;
+      }, []);
+      //находим всех pressent по id
+      const x = await PresentsModel.find({ _id: { $in: allPresents } });
+
+      return res.status(201).send(x);
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async addPresent(req, res, next) {
     try {
       const session = req.session;
       if (!session) {
-        return res.status(404).send({ message: "Session was not found" });
+        return res.status(404).send({ message: 'Session was not found' });
       }
-      const { childId,title, reward } = req.body;
-    
-      const splitpatch = req.files ? req.files.map(e => (e.path)) : ""
-      const imagePath = splitpatch ? `http://localhost:1717/`+`${splitpatch}`.split('\\').slice(3).join('/') : "";
+      const { childId, title, reward } = req.body;
+
+      const splitpatch = req.files ? req.files.map((e) => e.path) : '';
+      const imagePath = splitpatch
+        ? `http://localhost:1717/` +
+          `${splitpatch}`.split('\\').slice(3).join('/')
+        : '';
       const newPresent = await PresentsModel.create({
         title,
         childId,
@@ -53,34 +52,46 @@ try {
         image: imagePath,
         dateCreated: Date.now(),
       });
-      await ChildrenModel.findById(childId,(err,child)=>{
-        if(err)  {
-          return res.status(404).send({message:'Not Found Child'})
+      await ChildrenModel.findById(childId, (err, child) => {
+        if (err) {
+          return res.status(404).send({ message: 'Not Found Child' });
         }
-      child.presents.push(newPresent._id)
-      child.save();
-      res.status(200).send('Present added');
-      })
+        child.presents.push(newPresent._id);
+        child.save();
+        res.status(201).send(newPresent);
+      });
     } catch (err) {
       next(err);
     }
   }
-  
+
   async removePresent(req, res, next) {
     try {
       const session = req.session;
       if (!session) {
-        return res.status(404).send({ message: "Session was not found" });
+        return res.status(404).send({ message: 'Session was not found' });
       }
       const { presentId } = req.params;
-      const { childId } = req.body;
-      const Present = await PresentsModel.find({childId: childId});
-      if (!Present) return res.status(404).send({ message: 'Not found child' });
-      const result = await PresentsModel.findByIdAndDelete(presentId);
-      if (!result) return res.status(404).send({ message: 'Not found' });
-      const newPresent = await PresentsModel.find({childId: childId});
-      await ChildrenModel.findByIdAndUpdate(childId, {$set: {presents: newPresent}},{ upsert:true, returnNewDocument : true });
-      return res.status(201).send("Present deleted"); 
+
+      const present = await PresentsModel.findById(presentId);
+      if (!present) {
+        return res.status(404).send({ message: 'Present was not found' });
+      }
+
+      const childToUpdate = await ChildrenModel.findByIdAndUpdate(
+        present.childId,
+        { $pull: { presents: presentId } },
+        { new: true },
+      );
+      if (!childToUpdate) {
+        return res.status(404).send({ message: 'Child was not found' });
+      }
+
+      await PresentsModel.findByIdAndDelete(presentId);
+
+      return res
+        .status(200)
+        .send({ message: 'Present was deleted successful' });
     } catch (err) {
       next(err);
     }
@@ -88,61 +99,88 @@ try {
 
   async updatePresent(req, res, next) {
     try {
-      !req.session && res.status(404).send({ message: "Session was not found" });
-      const {_id,title,reward,childId} = req.body
-      const findIdPresent = await PresentsModel.findById(_id)
-      !findIdPresent && res.status(404).send({ message: "Present was not found" });
-      const updatePresent = await  PresentsModel.findByIdAndUpdate(_id, {
-        title,
-        childId,
-        reward,
-        image:'',
+      !req.session &&
+        res.status(404).send({ message: 'Session was not found' });
+
+      const { presentId } = req.params;
+
+      const updatedPresent = await PresentsModel.findByIdAndUpdate(presentId, {
+        ...req.body,
         dateCreated: Date.now(),
       });
-      !updatePresent && res.status(404).send({ message: "Not found Id" });
-        res.status(200).send({message:'Present was Update'})
-    }catch(error){
-      console.log(error)
-      next(error)
-    };
-  };
+
+      return updatedPresent
+        ? res.status(200).send(updatedPresent)
+        : res.status(404).send({ message: 'Present was not found' });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   async buyPresent(req, res, next) {
     try {
       const session = req.session;
       if (!session) {
-        return res.status(404).send({ message: "Session was not found" });
+        return res.status(404).send({ message: 'Session was not found' });
       }
       const { presentId } = req.params;
-      const { childId } = req.body;
-      const Present = await PresentsModel.findById(presentId);
-      const Child = await ChildrenModel.findById(childId);
-      const rewardChild = Child.stars;
-      const rewardPresent = Present.reward;
-      if(rewardChild >= rewardPresent){
+
+      const present = await PresentsModel.findById(presentId);
+      const child = await ChildrenModel.findById(present.childId);
+
+      const rewardChild = child.stars;
+      const rewardPresent = present.reward;
+
+      if (rewardChild >= rewardPresent) {
         const newRewardPresent = rewardChild - rewardPresent;
-        await ChildrenModel.findByIdAndUpdate(childId, {$set: {stars: newRewardPresent}},{ upsert:true, returnNewDocument : true });
-        return res.status(200).send('Present buy'); 
-      } else {res.status(404).send({ message: "You don't have that much stars" })}
+        await ChildrenModel.findByIdAndUpdate(
+          present.childId,
+          { stars: newRewardPresent },
+          { new: true },
+        );
+
+        return res.status(200).send({ message: 'Present was bought' });
+      } else {
+        res.status(404).send({ message: "You don't have that much stars" });
+      }
     } catch (err) {
       next(err);
     }
   }
 
-
-
-  validPresent = (req, res, next) => {
-    const validator = Joi.object({
-      _id:Joi.string(),
+  addPresentValidation(req, res, next) {
+    const addSchemaValidator = Joi.object({
+      _id: Joi.string(),
       title: Joi.string(),
       childId: Joi.string().required(),
       reward: Joi.number(),
       image: Joi.string(),
       dateCreated: Joi.date(),
     });
-    const { error } = validator.validate(req.body);
-    return error ? res.status(400).send(error.message) : next();
-  };
+
+    PresentsController.checkValidationError(addSchemaValidator, req, res, next);
+  }
+
+  updatePresentValidation(req, res, next) {
+    const updateSchemaRules = Joi.object({
+      title: Joi.string(),
+      childId: Joi.string(),
+      reward: Joi.number(),
+      image: Joi.string(),
+    });
+
+    PresentsController.checkValidationError(updateSchemaRules, req, res, next);
+  }
+
+  static checkValidationError(schema, req, res, next) {
+    const { error } = schema.validate(req.body);
+
+    if (error) {
+      const { message } = error.details[0];
+      return res.status(400).send({ error: message });
+    }
+    next();
+  }
 }
 
 module.exports = new PresentsController();
