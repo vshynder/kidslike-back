@@ -24,10 +24,6 @@ class LoginController {
         return res.send({ message: 'User was not verified' });
       }
       const parseId = ObjectId(user._id);
-      const session = await SessionModel.findOne({ sid: parseId });
-      if (session) {
-        return res.send({ message: 'Session is already created' });
-      }
       const createSession = await SessionModel.create({
         sid: parseId,
       });
