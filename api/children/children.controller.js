@@ -5,8 +5,6 @@ const Joi = require('joi');
 class Controllers {
   addChild = async (req, res, next) => {
     try {
-      req.user = { _id: '5fc73b4187026e0017e1d32b' }; //Заглушка, ожидает обьект req.user с полем _id Родителя
-
       req.body.idUser = req.user._id;
       const child = await ChildrenModel.create(req.body);
       let user = await UserModel.findById(req.body.idUser);
@@ -16,9 +14,16 @@ class Controllers {
       user.childrens.push(child.id);
       user.save();
 
-      return res
-        .status(201)
-        .send({ id: child._id, name: child.name, gender: child.gender });
+      return res.status(201).send({
+        id: child._id,
+        name: child.name,
+        gender: child.gender,
+        stars: child.stars,
+        habbits: child.habbits,
+        tasks: child.tasks,
+        presents: child.presents,
+        idUser: child.idUser,
+      });
     } catch (err) {
       next(err.message);
     }
