@@ -3,6 +3,17 @@ const UserModel = require('../users/users.model');
 const Joi = require('joi');
 
 class Controllers {
+  async getAllChildrensCurrentUser(req, res, next) {
+     try {
+       req.user.populate('childrens').execPopulate((error, child) => {
+         return res.send(
+           child.childrens
+          )
+        })
+     }catch(err) {
+       next(err)
+     }
+  }
   addChild = async (req, res, next) => {
     try {
       // const isExisted = await ChildrenModel.findOne({ name: req.body.name });
