@@ -104,10 +104,14 @@ class PresentsController {
 
       const { presentId } = req.params;
 
-      const updatedPresent = await PresentsModel.findByIdAndUpdate(presentId, {
-        ...req.body,
-        dateCreated: Date.now(),
-      });
+      const updatedPresent = await PresentsModel.findByIdAndUpdate(
+        presentId,
+        {
+          ...req.body,
+          dateCreated: Date.now(),
+        },
+        { new: true },
+      );
 
       return updatedPresent
         ? res.status(200).send(updatedPresent)
