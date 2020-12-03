@@ -3,15 +3,19 @@ const UserModel = require('../users/users.model');
 const Joi = require('joi');
 
 class Controllers {
+  async getAllChildrensCurrentUser(req, res, next) {
+     try {
+       req.user.populate('childrens').execPopulate((error, child) => {
+         return res.send(
+           child.childrens
+          )
+        })
+     }catch(err) {
+       next(err)
+     }
+  }
   addChild = async (req, res, next) => {
     try {
-      // const isExisted = await ChildrenModel.findOne({ name: req.body.name });
-      // if (isExisted) {
-      //   return res.status(409).send(`Child with this name exists`);
-      // }
-
-      // req.user = { _id: '5fb313842e5c6c182c9b214f' }; //Заглушка, ожидает обьект req.user с полем _id Родителя
-
       req.body.idUser = req.user._id;
       const child = await ChildrenModel.create(req.body);
       let user = await UserModel.findById(req.body.idUser);
@@ -21,9 +25,16 @@ class Controllers {
       user.childrens.push(child.id);
       user.save();
 
-      return res
-        .status(201)
-        .send({ id: child._id, name: child.name, gender: child.gender });
+      return res.status(201).send({
+        id: child._id,
+        name: child.name,
+        gender: child.gender,
+        stars: child.stars,
+        habbits: child.habbits,
+        tasks: child.tasks,
+        presents: child.presents,
+        idUser: child.idUser,
+      });
     } catch (err) {
       next(err.message);
     }

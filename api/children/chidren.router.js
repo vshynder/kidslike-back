@@ -10,4 +10,11 @@ childrenRouter.post(
   childrenController.addChild,
 );
 
+childrenRouter.get(
+  "/allChildrens",
+  LoginController.authorize,
+  childrenController.getAllChildrensCurrentUser
+)
+
+
 module.exports = childrenRouter;
