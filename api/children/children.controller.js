@@ -5,12 +5,7 @@ const Joi = require('joi');
 class Controllers {
   addChild = async (req, res, next) => {
     try {
-      // const isExisted = await ChildrenModel.findOne({ name: req.body.name });
-      // if (isExisted) {
-      //   return res.status(409).send(`Child with this name exists`);
-      // }
-
-      // req.user = { _id: '5fb313842e5c6c182c9b214f' }; //Заглушка, ожидает обьект req.user с полем _id Родителя
+      req.user = { _id: '5fc73b4187026e0017e1d32b' }; //Заглушка, ожидает обьект req.user с полем _id Родителя
 
       req.body.idUser = req.user._id;
       const child = await ChildrenModel.create(req.body);
