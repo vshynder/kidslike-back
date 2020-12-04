@@ -109,7 +109,7 @@ class PresentsController {
       const presentImg = req.file;
 
       const imageURL = await uploadImage(presentImg);
-      console.log('imageURL', imageURL);
+
       const imagePath = imageURL ? imageURL : '';
 
       const updatedPresent = await PresentsModel.findByIdAndUpdate(
