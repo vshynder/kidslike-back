@@ -1,5 +1,6 @@
 const { PresentsModel } = require('./presents.model');
 const { ChildrenModel } = require('../children/children.model');
+const { uploadImage } = require('../../helpers/multer-config');
 const Joi = require('joi');
 
 class PresentsController {
@@ -40,11 +41,12 @@ class PresentsController {
       }
       const { childId, title, reward } = req.body;
 
-      const splitpatch = req.files ? req.files.map((e) => e.path) : '';
-      const imagePath = splitpatch
-        ? `http://localhost:1717/` +
-          `${splitpatch}`.split('\\').slice(3).join('/')
-        : '';
+      const presentImg = req.file;
+
+      const imageURL = await uploadImage(presentImg);
+
+      const imagePath = imageURL ? imageURL : '';
+
       const newPresent = await PresentsModel.create({
         title,
         childId,
@@ -104,10 +106,17 @@ class PresentsController {
 
       const { presentId } = req.params;
 
+      const presentImg = req.file;
+
+      const imageURL = await uploadImage(presentImg);
+      console.log('imageURL', imageURL);
+      const imagePath = imageURL ? imageURL : '';
+
       const updatedPresent = await PresentsModel.findByIdAndUpdate(
         presentId,
         {
           ...req.body,
+          image: imagePath,
           dateCreated: Date.now(),
         },
         { new: true },

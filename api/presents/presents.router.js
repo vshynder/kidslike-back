@@ -1,14 +1,13 @@
 const { Router } = require('express');
 const presentsController = require('./presents.controller');
 const LoginController = require('../auth/login.controller');
-const { imageUploader } = require('./uploadImage');
-
+const { multerMid } = require('../../helpers/multer-config');
 const router = Router();
 
 router.post(
   '/',
   LoginController.authorize,
-  imageUploader,
+  multerMid.single('file'),
   presentsController.addPresentValidation,
   presentsController.addPresent,
 );
@@ -25,6 +24,7 @@ router.delete(
 router.patch(
   '/:presentId',
   LoginController.authorize,
+  multerMid.single('file'),
   presentsController.updatePresentValidation,
   presentsController.updatePresent,
 );

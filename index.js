@@ -33,7 +33,6 @@ class Server {
     this.server.use(cors());
     this.server.use(express.json());
     this.server.use(this.handleErrors);
-    this.server.use(express.static('./api/presents/public'));
   }
 
   initRoutes() {
