@@ -29,8 +29,8 @@ class Server {
   }
 
   initMiddlewares() {
-    this.server.use(morgan('dev'));
     this.server.use(cors());
+    this.server.use(morgan('dev'));
     this.server.use(express.json());
     this.server.use(this.handleErrors);
   }
