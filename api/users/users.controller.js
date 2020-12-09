@@ -100,7 +100,7 @@ class AuthController {
         return res.send('User was not found');
       }
       await AuthController.verifyUser(userToVerify._id);
-      return res.send({ message: 'User was verified' });
+      return res.redirect('https://kidslike-front-end.netlify.app/login').send({message: "User was verified"});
     } catch (err) {
       next(err);
     }
