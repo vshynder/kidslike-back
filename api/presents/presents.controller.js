@@ -151,7 +151,15 @@ class PresentsController {
           { stars: newRewardPresent },
           { new: true },
         );
-
+        const childToUpdate = await ChildrenModel.findByIdAndUpdate(
+          present.childId,
+          { $pull: { presents: presentId } },
+          { new: true },
+        );
+        if (!childToUpdate) {
+          return res.status(404).send({ message: 'Child was not found' });
+        }
+        await PresentsModel.findByIdAndDelete(presentId);
         return res.status(200).send({ message: 'Present was bought' });
       } else {
         res.status(404).send({ message: "You don't have that much stars" });
