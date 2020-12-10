@@ -16,20 +16,20 @@ class TokenController {
 
       //
       const sessionId = await jwt.verify(token, process.env.TOKEN_SECRET).sid;
-       console.log(sessionId);
+      console.log(sessionId);
       if (!sessionId) {
         res.status('Unauthorized', 401).send('not found session');
       }
       const session = await sessionModel.findById(sessionId);
       if (!session) {
         res.status(400).send({ message: 'not found session' });
-      };
+      }
 
       const user = await userModel.findById(session.sid);
       if (!user) {
         return res.status(400).send({ message: 'Not Found User' });
       }
-      //delete session 
+      //delete session
       await sessionModel.findByIdAndDelete(session._id);
       // new session
       const newSession = await sessionModel.create({
@@ -39,7 +39,7 @@ class TokenController {
       const accessToken = await jwt.sign(
         {
           uid: user.id || user._id,
-          sid:newSession._id,
+          sid: newSession._id,
         },
         process.env.TOKEN_SECRET,
         {
@@ -50,7 +50,7 @@ class TokenController {
       const refreshToken = await jwt.sign(
         {
           uid: user.id || user._id,
-          sid:newSession._id,
+          sid: newSession._id,
         },
         process.env.TOKEN_SECRET,
         {

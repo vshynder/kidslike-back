@@ -47,6 +47,7 @@ class GoogleOAuthController {
       client_id:
         '85907041916-n8741e6h0gnv1ehv8f67anjrjk69qij6.apps.googleusercontent.com', //  Заглушка , тут будет id нашего серваси
       redirect_uri: `https://kidslike-back-end.herokuapp.com/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
+      // redirect_uri: `http://localhost:1717/api/auth/google/callback`,
       scope: [
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile',
@@ -67,6 +68,8 @@ class GoogleOAuthController {
           '85907041916-n8741e6h0gnv1ehv8f67anjrjk69qij6.apps.googleusercontent.com', //  Заглушка
         client_secret: 'I9CSPs3RUwOKVAG2OhAYEuYd', //  Заглушка
         redirect_uri: `https://kidslike-back-end.herokuapp.com/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
+        // redirect_uri: `http://localhost:1717/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
+
         grant_type: 'authorization_code',
         code,
       })
@@ -173,46 +176,36 @@ exports.initUser = async function initifacationUser(req, res) {
     const access_token = await jwt.sign(
       {
         uid: user.id || user._id,
-        sid:session._id,
+        sid: session._id,
       },
       process.env.TOKEN_SECRET,
       {
         expiresIn: '1h',
       },
     );
-    const refresh_token = await jwt.sign(
+    const refreshToken = await jwt.sign(
       {
         uid: user.id || user._id,
-        sid:session._id,
+        sid: session._id,
       },
       process.env.TOKEN_SECRET,
       {
         expiresIn: '30d',
       },
     );
-   console.log('user :', user);
-   console.log('access_token :', access_token );
-   console.log('refresh_token :');
-    return res.status(201).json({
-      user:{
-        _id:user._id,
-        username:user.username,
-        email:user.email,
-        avatarURL:user.avatarURL,
-        children:user.childrens
-      },
-      access_token,
-      refresh_token,
-    });
+    res.cookie('accessToken', access_token);
+    res.cookie('refreshToken', refreshToken);
+    return res.redirect('https://kidslike-front-end.netlify.app/login');
   } catch (error) {
     console.log(error);
   }
 };
 
 async function newUser(user) {
-  const hashPassword = await bcrypt.hash('secretPassword', 5);
+  const hashPassword = await bcrypt.hash('hashPassword', 5);
 
   const newUser = await userModel.create({
+    status: 'verified',
     username: user.name,
     password: hashPassword,
     email: user.email,
