@@ -5,6 +5,7 @@ const morgan = require('morgan');
 require('dotenv').config();
 const cors = require('cors');
 const swaggerDocument = require('./swagger.json');
+const coockiesParser = require('cookie-parser');
 
 const tokenRouter = require('./api/token/token.router');
 const tasksRouter = require('./api/tasks/tasks.router');
@@ -29,6 +30,7 @@ class Server {
   }
 
   initMiddlewares() {
+    this.server.use(coockiesParser());
     this.server.use(cors());
     this.server.use(morgan('dev'));
     this.server.use(express.json());
