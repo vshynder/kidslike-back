@@ -46,8 +46,8 @@ class GoogleOAuthController {
     const params = queryString.stringify({
       client_id:
         '85907041916-n8741e6h0gnv1ehv8f67anjrjk69qij6.apps.googleusercontent.com', //  Заглушка , тут будет id нашего серваси
-      redirect_uri: `https://kidslike-back-end.herokuapp.com/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
-      // redirect_uri: `http://localhost:1717/api/auth/google/callback`,
+      //redirect_uri: `https://kidslike-back-end.herokuapp.com/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
+       redirect_uri: `http://localhost:1717/api/auth/google/callback`,
       scope: [
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile',
@@ -67,8 +67,8 @@ class GoogleOAuthController {
         client_id:
           '85907041916-n8741e6h0gnv1ehv8f67anjrjk69qij6.apps.googleusercontent.com', //  Заглушка
         client_secret: 'I9CSPs3RUwOKVAG2OhAYEuYd', //  Заглушка
-        redirect_uri: `https://kidslike-back-end.herokuapp.com/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
-        // redirect_uri: `http://localhost:1717/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
+        //redirect_uri: `https://kidslike-back-end.herokuapp.com/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
+        redirect_uri: `http://localhost:1717/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
 
         grant_type: 'authorization_code',
         code,
@@ -195,7 +195,8 @@ exports.initUser = async function initifacationUser(req, res) {
     );
     res.cookie('accessToken', access_token);
     res.cookie('refreshToken', refreshToken);
-    return res.redirect('https://kidslike-front-end.netlify.app/login');
+    // return res.redirect('https://kidslike-front-end.netlify.app/login');
+    return res.redirect('http://localhost:3000/login');
   } catch (error) {
     console.log(error);
   }

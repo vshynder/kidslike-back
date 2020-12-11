@@ -17,7 +17,7 @@ class LoginController {
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
-        return res.send({ message: 'Authentefication failed.' });
+        return res.status(406).send({ message: 'Password invalid' });
       }
 
       if (user.status != 'verified') {
