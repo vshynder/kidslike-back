@@ -124,7 +124,7 @@ class TaskController {
         isCompleted: 'done',
       });
 
-      const childId = task.childId;
+      const childId = task.childId.toString()
       const child = await ChildrenModel.findById(childId);
 
       const balanceChild = child.stars;
@@ -133,7 +133,7 @@ class TaskController {
       const addReward = await ChildrenModel.findByIdAndUpdate(
         childId,
         {
-          stars: total,
+          $set: {stars: total},
         },
         { new: true },
       );
