@@ -21,35 +21,35 @@
     ],
     "tags": [
         {
-            "name": "Авторизация"
+            "name": "Auth"
         },
         {
-            "name": "Ребенок"
+            "name": "Child"
         },
         {
-            "name": "Задачи"
+            "name": "Task"
         },
         {
-            "name": "Привычки"
+            "name": "Habit"
         },
         {
-            "name": "Подарки"
+            "name": "Present"
         }
     ],
     "paths": {
         "api/auth/register": {
             "post": {
                 "tags": [
-                    "Авторизация"
+                    "Auth"
                 ],
-                "summary": "Регистрация пользователя",
-                "description": "Зарегистрировать нового пользователя",
+                "summary": "User registration",
+                "description": "Sign up a new User",
                 "parameters": [
                     {
                         "name": "Request body",
                         "in": "body",
                         "required": true,
-                        "description": "Объект данных для регистрации пользователя",
+                        "description": "Data object for User registration",
                         "schema": {
                             "$ref": "#/components/schemas/register"
                         }
@@ -57,17 +57,17 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "Пользователь создан",
+                        "description": "Success",
                         "content": "application/json",
                         "schema": {
                             "$ref": "#/components/schemas/registerSuccess"
                         }
                     },
                     "400": {
-                        "description": "Ошибка создания пользователя"
+                        "description": "Bad request"
                     },
                     "409": {
-                        "description": "User already exists"
+                        "description": "Error. User already exists"
                     }
                 }
             }
@@ -75,15 +75,15 @@
         "api/auth/login": {
             "post": {
                 "tags": [
-                    "Авторизация"
+                    "Auth"
                 ],
-                "summary": "Залогинить пользователя",
-                "description": "Залогинить пользователя",
+                "summary": "Login user",
+                "description": "User authentication",
                 "parameters": [
                     {
                         "name": "Request body",
                         "in": "body",
-                        "description": "Объект данных для входа",
+                        "description": "Data object for login",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/login"
@@ -92,14 +92,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Авторизация прошла успешна",
+                        "description": "Authentication success",
                         "content": "application/json",
                         "schema": {
                             "$ref": "#/components/schemas/loginSuccess"
                         }
                     },
                     "400": {
-                        "description": "Ошибка авторизации"
+                        "description": "Bad request"
                     }
                 }
             }
@@ -107,9 +107,9 @@
         "api/auth/logout": {
             "delete": {
                 "tags": [
-                    "Авторизация"
+                    "Auth"
                 ],
-                "summary": "Разлогинить пользователя",
+                "summary": "Logout user",
                 "consumes": [
                     "application/json"
                 ],
@@ -141,21 +141,21 @@
         "api/auth/google": {
             "get": {
                 "tags": [
-                    "Авторизация"
+                    "Auth"
                 ],
-                "summary": "Авторизация через google",
-                "description": "Перенаправляет на сервис регистрации через google",
+                "summary": "Authorization with google",
+                "description": "Redirect to the registration service with google",
                 "parameters": [],
                 "responses": {
                     "200": {
-                        "description": "Авторизация прошла успешна",
+                        "description": "Redirect user to the /login route",
                         "content": "application/json",
                         "schema": {
                             "$ref": "#/components/schemas/OAuthSuccess"
                         }
                     },
                     "400": {
-                        "description": "Ошибка авторизации"
+                        "description": "Bad request"
                     }
                 }
             }
@@ -163,20 +163,20 @@
         "api/auth/facebook": {
             "get": {
                 "tags": [
-                    "Авторизация"
+                    "Auth"
                 ],
-                "summary": "Авторизация через facebook",
-                "description": "перенаправляет на сервис регистрации через facebook",
+                "summary": "Authorization with facebook",
+                "description": "Redirect to the registration service with facebook",
                 "responses": {
                     "200": {
-                        "description": "Авторизация прошла успешна",
+                        "description": "Redirect user to the /login route",
                         "content": "application/json",
                         "schema": {
                             "$ref": "#/components/schemas/OAuthSuccess"
                         }
                     },
                     "400": {
-                        "description": "Ошибка авторизации"
+                        "description": "Bad request"
                     }
                 }
             }
@@ -184,9 +184,9 @@
         "api/auth/current": {
             "get": {
                 "tags": [
-                    "Авторизация"
+                    "Auth"
                 ],
-                "summary": "Получить текущего пользователя",
+                "summary": "Get current user",
                 "parameters": [
                     {
                         "name": "Authorization",
@@ -214,10 +214,10 @@
         "api/token/token_refresh": {
             "post": {
                 "tags": [
-                    "Авторизация"
+                    "Auth"
                 ],
-                "summary": "Получить новую пару токенов",
-                "description": "После отправления на сервер refresh_token получает новую пару токенов access и refresh",
+                "summary": "Get a new pair of tokens",
+                "description": "After sending a refreshToken to server get a new pair of tokens: accessToken & refreshToken",
                 "parameters": [
                     {
                         "name": "Authorization",
@@ -248,17 +248,17 @@
         "api/children/addchild": {
             "post": {
                 "tags": [
-                    "Ребенок"
+                    "Child"
                 ],
-                "summary": "Добавить ребенка",
-                "description": "Добавить ребенка пользователя",
+                "summary": "Add child",
+                "description": "Add a user's child",
                 "consumes": [
                     "application/json"
                 ],
                 "parameters": [
                     {
                         "name": "Request body",
-                        "description": "Объект данных ребенка",
+                        "description": "Child's data object",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -275,14 +275,14 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "Ребенок добавлен",
+                        "description": "Child was added",
                         "content": "application/json",
                         "schema": {
                             "$ref": "#/components/schemas/addChildResponse"
                         }
                     },
                     "400": {
-                        "description": "Ошибка добавления ребенка"
+                        "description": "Bad request"
                     },
                     "401": {
                         "description": "Unauthorized"
@@ -293,9 +293,9 @@
         "api/habbits": {
             "post": {
                 "tags": [
-                    "Привычки"
+                    "Habit"
                 ],
-                "summary": "Добавить привычку",
+                "summary": "Add a habit",
                 "description": "",
                 "consumes": [
                     "application/json"
@@ -305,7 +305,7 @@
                         "name": "Request body",
                         "in": "body",
                         "required": true,
-                        "description": "Объект данных для добавления привычки ребенка",
+                        "description": "Data object to add a child's habit",
                         "schema": {
                             "$ref": "#/components/schemas/addHabbit"
                         }
@@ -335,10 +335,10 @@
             },
             "get": {
                 "tags": [
-                    "Привычки"
+                    "Habit"
                 ],
-                "summary": "Получить привычки",
-                "description": "Получение привычек всех детей пользователя",
+                "summary": "Get children's habit",
+                "description": "Getting all the habits of all the user's children",
                 "consumes": [
                     "application/json"
                 ],
@@ -370,10 +370,10 @@
         "api/habbits/:idHabbit": {
             "delete": {
                 "tags": [
-                    "Привычки"
+                    "Habit"
                 ],
-                "summary": "Удалить привычку",
-                "description": "Удаление привычки ребенка пользователя",
+                "summary": "Delete habit",
+                "description": "Delete a child's habit",
                 "consumes": [
                     "application/json"
                 ],
@@ -408,10 +408,10 @@
         "api/habbits/updatehabbit": {
             "patch": {
                 "tags": [
-                    "Привычки"
+                    "Habit"
                 ],
-                "summary": "Редактировать привычку",
-                "description": "",
+                "summary": "Update habit",
+                "description": "Update a child's habit",
                 "consumes": [
                     "application/json"
                 ],
@@ -452,10 +452,10 @@
         "api/habbits/checkhabbit": {
             "patch": {
                 "tags": [
-                    "Привычки"
+                    "Habit"
                 ],
-                "summary": "Подтвердить привычку",
-                "description": "Подтверждение или невыполнение привычки на сегодня",
+                "summary": "Check habit",
+                "description": "Confirmation or removal of the habbit for today",
                 "consumes": [
                     "application/json"
                 ],
@@ -496,10 +496,10 @@
         "api/tasks": {
             "get": {
                 "tags": [
-                    "Задачи"
+                    "Task"
                 ],
-                "summary": "Получить все задачи",
-                "description": "Получение всех задач всех детей пользователя",
+                "summary": "Get tasks",
+                "description": "Getting all the tasks of all the user's children",
                 "parameters": [
                     {
                         "name": "Authorization",
@@ -530,10 +530,10 @@
         "api/tasks/:childId": {
             "get": {
                 "tags": [
-                    "Задачи"
+                    "Task"
                 ],
-                "summary": "Получить выполненные задачи ",
-                "description": "Получить все выполненные задачи ребенка пользователя",
+                "summary": "Get completed tasks",
+                "description": "Get all the completed tasks of the user's child",
                 "parameters": [
                     {
                         "name": "Child Id",
@@ -570,10 +570,10 @@
             },
             "post": {
                 "tags": [
-                    "Задачи"
+                    "Task"
                 ],
-                "summary": "Добавить задачу",
-                "description": "Добавить задачу ребенку пользователя",
+                "summary": "Add task",
+                "description": "Add a new task to the user's child",
                 "parameters": [
                     {
                         "name": "Child Id",
@@ -584,7 +584,7 @@
                     },
                     {
                         "name": "Task",
-                        "description": "Объект данных задачи ребенка",
+                        "description": "Data object of the child's task",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -600,7 +600,7 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "Задача добавлена",
+                        "description": "Success. Task was created.",
                         "content": "application/json",
                         "schema": {
                             "$ref": "#/components/schemas/addTaskResponse"
@@ -621,10 +621,10 @@
         "api/tasks/:taskId": {
             "patch": {
                 "tags": [
-                    "Задачи"
+                    "Task"
                 ],
-                "summary": "Изменить задачу",
-                "description": "Изменить задачу ребенка пользователя",
+                "summary": "Update task",
+                "description": "Update the user's child's task",
                 "parameters": [
                     {
                         "name": "Task Id",
@@ -635,7 +635,7 @@
                     },
                     {
                         "name": "Task",
-                        "description": "Объект данных задачи ребенка",
+                        "description": "Data object of child's task",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -651,10 +651,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Задача изменена"
+                        "description": "Succes. Task was updated"
                     },
                     "400": {
-                        "description": "Ошибка изменения задачи "
+                        "description": "Bad request"
                     },
                     "401": {
                         "description": "Unauthorized"
@@ -666,10 +666,10 @@
             },
             "delete": {
                 "tags": [
-                    "Задачи"
+                    "Task"
                 ],
-                "summary": "Удалить задачу",
-                "description": "Удалить задачу ребенка пользователя",
+                "summary": "Delete task",
+                "description": "Delete task from the user's child ",
                 "parameters": [
                     {
                         "name": "Task Id",
@@ -704,10 +704,10 @@
         "api/tasks/confirm/:taskId": {
             "patch": {
                 "tags": [
-                    "Задачи"
+                    "Task"
                 ],
-                "summary": "Подтвердить задачу",
-                "description": "Подтверждение задачи ребенка пользователя",
+                "summary": "Confirm the task",
+                "description": "Confirm task of the user's child",
                 "parameters": [
                     {
                         "name": "Task Id",
@@ -742,10 +742,10 @@
         "api/tasks/notconfirm/:taskId": {
             "patch": {
                 "tags": [
-                    "Задачи"
+                    "Task"
                 ],
-                "summary": "Невыполнение задачи",
-                "description": "Отметить невыполненной задачу ребенка пользователя",
+                "summary": "Not confirm the task",
+                "description": "Don't confirm the user's child's task",
                 "parameters": [
                     {
                         "name": "Task Id",
@@ -780,10 +780,10 @@
         "api/tasks/repeat/:taskId": {
             "patch": {
                 "tags": [
-                    "Задачи"
+                    "Task"
                 ],
-                "summary": "Повторить задачу",
-                "description": "Повторить задачу ребенка пользователя",
+                "summary": "Repeat the task ",
+                "description": "Repeat the user's child's task.",
                 "parameters": [
                     {
                         "name": "Task Id",
@@ -818,9 +818,9 @@
         "api/presents/": {
             "get": {
                 "tags": [
-                    "Подарки"
+                    "Present"
                 ],
-                "summary": "Получение подарков",
+                "summary": "Get all the presents",
                 "description": "",
                 "parameters": [
                     {
@@ -849,16 +849,16 @@
             },
             "post": {
                 "tags": [
-                    "Подарки"
+                    "Present"
                 ],
-                "summary": "Добавление подарка",
-                "description": "",
+                "summary": "Add a present",
+                "description": "Add a present to the user's child",
                 "parameters": [
                     {
                         "name": "Request body",
                         "in": "body",
                         "required": true,
-                        "description": "Объект данных для добавления подарка",
+                        "description": "Data object to add child's present",
                         "schema": {
                             "$ref": "#/components/schemas/addPresent"
                         }
@@ -893,9 +893,9 @@
         "api/presents/:presentId": {
             "patch": {
                 "tags": [
-                    "Подарки"
+                    "Present"
                 ],
-                "summary": "Обновление подарка",
+                "summary": "Update present",
                 "description": "Update child's present",
                 "parameters": [
                     {
@@ -943,10 +943,10 @@
             },
             "delete": {
                 "tags": [
-                    "Подарки"
+                    "Present"
                 ],
-                "summary": "Удаление подарка",
-                "description": "",
+                "summary": "Delete present",
+                "description": "Delete a child's present ",
                 "parameters": [
                     {
                         "name": "Present's Id",
@@ -979,17 +979,17 @@
         "api/presents/buy/:presentId": {
             "patch": {
                 "tags": [
-                    "Подарки"
+                    "Present"
                 ],
-                "summary": "Покупка подарка",
-                "description": "",
+                "summary": "Buy present",
+                "description": "Buy a child's present",
                 "parameters": [
                     {
                         "name": "Present Id",
                         "in": "path",
                         "type": "string",
                         "required": true,
-                        "description": "Объект данных для покупки подарка"
+                        "description": "Data object to buy a present"
                     },
                     {
                         "name": "Authorization",
@@ -1021,40 +1021,11 @@
             "OAuthSuccess": {
                 "type": "object",
                 "properties": {
-                    "user": {
-                        "type": "object",
-                        "properties": {
-                            "_id": {
-                                "type": "string"
-                            },
-                            "username": {
-                                "type": "string"
-                            },
-                            "email": {
-                                "type": "string"
-                            },
-                            "avatarURL": {
-                                "type": "string"
-                            },
-                            "childrens": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "objectId": {
-                                            "type": "string",
-                                            "desctiption": "ObjectId"
-                                        }
-                                    }
-                                }
-                            },
-                            "access_token": {
-                                "type": "string"
-                            },
-                            "refresh_token": {
-                                "type": "string"
-                            }
-                        }
+                    "accessToken": {
+                        "type": "string"
+                    },
+                    "refreshToken": {
+                        "type": "string"
                     }
                 }
             },
