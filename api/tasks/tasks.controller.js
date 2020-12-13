@@ -118,13 +118,29 @@ class TaskController {
   async confirmTask(req, res, next) {
     try {
       const { taskId } = req.params;
+      const task = await TaskModel.findById(taskId);
+
       const confirmedTask = await TaskModel.findByIdAndUpdate(taskId, {
         isCompleted: 'done',
       });
-      console.log(confirmedTask);
+
+      const childId = task.childId;
+      const child = await ChildrenModel.findById(childId);
+
+      const balanceChild = child.stars;
+      const reward = task.reward;
+      const total = balanceChild + reward;
+      const addReward = await ChildrenModel.findByIdAndUpdate(
+        childId,
+        {
+          stars: total,
+        },
+        { new: true },
+      );
+      console.log(addReward);
       return confirmedTask
         ? res.status(200).send({ message: 'Task confirmed' })
-        : res.status(200).send({ message: 'Not found' });
+        : res.status(404).send({ message: 'Not found' });
     } catch (error) {
       next(error);
     }
@@ -179,6 +195,7 @@ class TaskController {
     const updateSchemaRules = Joi.object({
       title: Joi.string(),
       reward: Joi.number(),
+      childId: Joi.string(),
       daysToDo: Joi.number(),
     });
 
