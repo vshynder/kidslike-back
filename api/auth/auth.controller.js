@@ -193,9 +193,11 @@ exports.initUser = async function initifacationUser(req, res) {
         expiresIn: '30d',
       },
     );
-    res.cookie('accessToken', access_token);
-    res.cookie('refreshToken', refreshToken);
-    return res.redirect('https://kidslike-front-end.netlify.app/login');
+    return res
+      .status(200)
+      .redirect(
+        `http://localhost:3000/login?token=${access_token}&refreshToken=${refreshToken}`,
+      );
   } catch (error) {
     console.log(error);
   }
