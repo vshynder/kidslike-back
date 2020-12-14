@@ -68,7 +68,7 @@ class GoogleOAuthController {
           '85907041916-n8741e6h0gnv1ehv8f67anjrjk69qij6.apps.googleusercontent.com', //  Заглушка
         client_secret: 'I9CSPs3RUwOKVAG2OhAYEuYd', //  Заглушка
         redirect_uri: `https://kidslike-back-end.herokuapp.com/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
-        //redirect_uri: `http://localhost:1717/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
+        // redirect_uri: `http://localhost:1717/api/auth/google/callback`, //  Заглушка url нашего сервиса на heruku /api/auth/google/callback
 
         grant_type: 'authorization_code',
         code,
@@ -193,10 +193,13 @@ exports.initUser = async function initifacationUser(req, res) {
         expiresIn: '30d',
       },
     );
-    res.cookie('accessToken', access_token);
-    res.cookie('refreshToken', refreshToken);
-     return res.redirect('https://kidslike-front-end.netlify.app/login');
-    //return res.redirect('http://localhost:3000/login');
+    //  openID
+
+    return res
+      .status(200)
+      .redirect(
+        `https://kidslike-front-end.netlify.app/login?token=${access_token}&refreshToken=${refreshToken}`,
+      );
   } catch (error) {
     console.log(error);
   }
