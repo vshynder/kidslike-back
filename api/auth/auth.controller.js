@@ -193,6 +193,7 @@ exports.initUser = async function initifacationUser(req, res) {
         expiresIn: '30d',
       },
     );
+
     return res
       .status(200)
       .redirect(
