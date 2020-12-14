@@ -119,14 +119,8 @@ class TaskController {
     try {
       const { taskId } = req.params;
       const task = await TaskModel.findById(taskId);
-
-      const confirmedTask = await TaskModel.findByIdAndUpdate(taskId, {
-        isCompleted: 'done',
-      });
-
-      const childId = task.childId.toString()
+      const childId = task.childId.toString();
       const child = await ChildrenModel.findById(childId);
-
       const balanceChild = child.stars;
       const reward = task.reward;
       const total = balanceChild + reward;
@@ -137,8 +131,13 @@ class TaskController {
         },
         { new: true },
       );
-      console.log(addReward);
-      return confirmedTask
+      const confirmedTask = await TaskModel.findByIdAndUpdate(taskId, 
+        {
+          $set: {isCompleted: 'done'},
+        },
+        {new: true},
+      );
+      return confirmedTask && addReward
         ? res.status(200).send({ message: 'Task confirmed' })
         : res.status(404).send({ message: 'Not found' });
     } catch (error) {
